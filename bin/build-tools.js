@@ -63,7 +63,6 @@ var symlinkFile = exports.symlinkFile = function symlinkFile( old_file, new_file
 
 var copyFile = exports.copyFile = function copyFile( old_file, new_file, callback ) {
 	// copy file
-	
 	if (new_file.match(/\/$/)) new_file += path.basename(old_file);
 	console.log( "Copy: " + old_file + " --> " + new_file );
 	
@@ -74,14 +73,9 @@ var copyFile = exports.copyFile = function copyFile( old_file, new_file, callbac
 		mkdirp.sync( path.dirname(new_file) );
 	}
 	
-	var stats = fs.statSync( old_file );
-	
-	var inp = fs.createReadStream( old_file );
-	var outp = fs.createWriteStream( new_file );
-	inp.on('end', function(err) {
-		if (!err) fs.chmodSync( new_file, stats.mode );
-		callback(err);
-	} );
+	var inp = fs.createReadStream(old_file);
+	var outp = fs.createWriteStream(new_file);
+	inp.on('end', callback );
 	inp.pipe( outp );
 };
 
@@ -188,14 +182,13 @@ var chmodFiles = exports.chmodFiles = function chmodFiles( mode, spec, callback 
 	} );
 };
 
-var copyDir = exports.copyDir = function copyDir( src_dir, dest_dir, opts, callback ) {
+var copyDir = exports.copyDir = function copyDir( src_dir, dest_dir, exclusive, callback ) {
 	// recursively copy dir and contents, optionally with exclusive mode
 	// symlinks are followed, and the target is copied instead
-	if (!opts) opts = {};
 	var src_spec = src_dir + '/*';
 	
 	// exclusive means skip if dest exists (do not replace)
-	if (opts.exclusive && fileExistsSync(dest_dir)) return callback();
+	if (exclusive && fileExistsSync(dest_dir)) return callback();
 	
 	mkdirp.sync( dest_dir );
 	
@@ -204,54 +197,13 @@ var copyDir = exports.copyDir = function copyDir( src_dir, dest_dir, opts, callb
 		if (files && files.length) {
 			async.eachSeries( files, function(src_file, callback) {
 				// foreach file
-				if (opts.include && !src_file.match(opts.include)) {
-					return process.nextTick( callback );
-				}
-				if (opts.exclude && src_file.match(opts.exclude)) {
-					return process.nextTick( callback );
-				}
 				var stats = fs.statSync(src_file);
 				
 				if (stats.isFile()) {
 					copyFile( src_file, dest_dir + '/', callback );
 				}
 				else if (stats.isDirectory()) {
-					copyDir( src_file, dest_dir + '/' + path.basename(src_file), opts, callback );
-				}
-			}, callback );
-		} // got files
-		else {
-			callback( err );
-		}
-	} );
-};
-
-var filterDir = exports.filterDir = function filterDir( src_dir, opts, callback ) {
-	// apply custom filter to all files in a directory, recursively
-	if (!opts) opts = {};
-	var src_spec = src_dir + '/*';
-	
-	glob(src_spec, {}, function (err, files) {
-		// got files
-		if (files && files.length) {
-			async.eachSeries( files, function(src_file, callback) {
-				// foreach file
-				if (opts.include && !src_file.match(opts.include)) {
-					return process.nextTick( callback );
-				}
-				if (opts.exclude && src_file.match(opts.exclude)) {
-					return process.nextTick( callback );
-				}
-				var stats = fs.statSync(src_file);
-				
-				if (stats.isFile()) {
-					var contents = fs.readFileSync( src_file, 'utf8' );
-					contents = opts.filter( src_file, contents );
-					fs.writeFileSync( src_file, contents );
-					return process.nextTick( callback );
-				}
-				else if (stats.isDirectory()) {
-					filterDir( src_file, opts, callback );
+					copyDir( src_file, dest_dir + '/' + path.basename(src_file), exclusive, callback );
 				}
 			}, callback );
 		} // got files
