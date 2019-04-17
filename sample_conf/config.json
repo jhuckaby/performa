@@ -1,0 +1,101 @@
+{
+	"base_app_url": "http://localhost:5511",
+	"email_from": "admin@localhost",
+	"email_to": "",
+	"smtp_hostname": "localhost",
+	"smtp_port": 25,
+	"secret_key": "CHANGE_ME",
+	
+	"log_dir": "logs",
+	"log_filename": "[component].log",
+	"log_columns": ["hires_epoch", "date", "hostname", "pid", "component", "category", "code", "msg", "data"],
+	"log_archive_path": "logs/archives/[yyyy]/[mm]/[dd]/[filename]-[yyyy]-[mm]-[dd].log.gz",
+	"log_crashes": true,
+	"pid_file": "logs/performa.pid",
+	"debug_level": 9,
+	"maintenance": "04:00",
+	"expiration": "10 years",
+	"monitor_self": true,
+	
+	"hostname_display_strip": "\\.[\\w\\-]+\\.\\w+$",
+	"alert_web_hook": "",
+	
+	"client": {
+		"name": "Performa",
+		"debug": 1,
+		"privilege_list": [
+			{ "id": "admin", "title": "Administrator" }
+		],
+		"max_legend_size": 16,
+		"extra_server_info": {
+			"title": "Kernel Version",
+			"source": "[os/platform] [os/kernel]"
+		}
+	},
+	
+	"Storage": {
+		"engine": "Filesystem",
+		"list_page_size": 100,
+		"hash_page_size": 100,
+		"concurrency": 4,
+		"transactions": true,
+		"trans_auto_recover": true,
+		"cache_key_match": "^(global/|users/|sessions/)",
+		"log_event_types": { "get": 1, "put": 1, "head": 1, "delete": 1, "expire_set": 1, "maint": 1 },
+		
+		"Filesystem": {
+			"base_dir": "data",
+			"key_namespaces": 1,
+			"raw_file_paths": 1
+		}
+	},
+	
+	"WebServer": {
+		"http_port": 5511,
+		"http_htdocs_dir": "htdocs",
+		"http_max_upload_size": 104857600,
+		"http_static_ttl": 3600,
+		"http_static_index": "index.html",
+		"http_server_signature": "Performa 1.0",
+		"http_gzip_text": true,
+		"http_timeout": 30,
+		"http_regex_json": "(text|javascript|js|json)",
+		"http_response_headers": {
+			"Access-Control-Allow-Origin": "*"
+		},
+		
+		"https": false,
+		"https_port": 5522,
+		"https_cert_file": "conf/ssl.crt",
+		"https_key_file": "conf/ssl.key",
+		"https_force": false,
+		"https_timeout": 30,
+		"https_header_detect": {
+			"Front-End-Https": "^on$",
+			"X-Url-Scheme": "^https$",
+			"X-Forwarded-Protocol": "^https$",
+			"X-Forwarded-Proto": "^https$",
+			"X-Forwarded-Ssl": "^on$"
+		}
+	},
+	
+	"User": {
+		"session_expire_days": 30,
+		"max_failed_logins_per_hour": 5,
+		"max_forgot_passwords_per_hour": 3,
+		"free_accounts": false,
+		"sort_global_users": true,
+		"use_bcrypt": true,
+		
+		"email_templates": {
+			"welcome_new_user": "conf/emails/welcome_new_user.txt",
+			"changed_password": "conf/emails/changed_password.txt",
+			"recover_password": "conf/emails/recover_password.txt"
+		},
+		
+		"default_privileges": {
+			"admin": 0
+		}
+	}
+	
+}

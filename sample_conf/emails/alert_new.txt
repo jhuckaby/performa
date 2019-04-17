@@ -1,0 +1,31 @@
+To: [/email_to]
+From: [/config/email_from]
+Subject: [/config/client/name] Alert: [/nice_hostname]: [/def/title]
+
+The following [/config/client/name] alert has been triggered: [/def/title]
+
+Message: [/alert/message]
+Hostname: [/params/hostname]
+IP Address: [/params/ip]
+Group: [/nice_group]
+Date/Time: [/date_time]
+Expression: [/def/expression]
+Evaluation: [/alert/exp]
+
+Live Server View:
+[/self_url]
+
+Alert Notes:
+[/nice_notes]
+
+Server Information:
+CPU Load Average: [/nice_load_avg]
+CPU Cores: [/params/data/cpu/cores]
+Total Memory: [/nice_mem_total]
+Available Memory: [/nice_mem_avail]
+Disk Usage (Root): [/params/data/mounts/root/use]%
+Operating System: [/nice_os]
+Uptime: [/nice_uptime]
+
+Regards,
+The Performa Team

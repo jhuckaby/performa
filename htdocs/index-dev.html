@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Loading...</title>
+	<meta name="description" content="A simple web app.">
+	<meta name="author" content="Joseph Huckaby">
+	<link rel="shortcut icon" href="/favicon.ico">
+	
+	<!-- BUILD: COMBINE_STYLE_START -->
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/materialdesignicons.min.css">
+	<!-- BUILD: COMBINE_STYLE_END -->
+</head>
+
+<body>
+	<div id="d_message" class="message" style="display:none" onMouseUp="app.hideMessage(250)">
+		<div id="d_message_inner" class="message_inner"></div>
+	</div>
+	
+	<div id="d_header">
+		<div class="container">
+			<div id="d_header_logo" class="left">
+				<i class="mdi mdi-resistor-nodes"></i>
+			</div>
+			<div id="d_header_title" class="left"></div>
+			<div id="d_header_user_container" style="right"></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="container">
+				
+		<div class="master_content_container">
+			<!-- Main Content Area -->
+			<div class="tab_bar" style="display:none">
+				<div id="tab_Login" class="tab inactive" style="display:none"><span class="content"></span></div>
+				<div id="tab_Home" class="tab inactive"><span class="content"><i class="mdi mdi-chart-areaspline mdi-lg">&nbsp;&nbsp;</i>Overview</span></div>
+				<div id="tab_Group" class="tab inactive"><span class="content"><i class="mdi mdi-server-network mdi-lg">&nbsp;&nbsp;</i>Group Detail</span></div>
+				<div id="tab_Server" class="tab inactive"><span class="content"><i class="mdi mdi-desktop-tower mdi-lg">&nbsp;</i>Server Detail</span></div>
+				<div id="tab_MyAccount" class="tab inactive"><span class="content"><i class="fa fa-user fa-lg2">&nbsp;&nbsp;</i>My Account</span></div>
+				<div id="tab_Admin" class="tab inactive" style="display:none"><span class="content"><i class="mdi mdi-lock mdi-lg">&nbsp;&nbsp;</i>Admin</span></div>
+				
+				<div class="tab_widget"><i class="fa fa-chevron-down"></i><select id="fe_jump_to_server" class="subtitle_menu" onChange="$P().jumpToServer($(this).val())"><option value="">Jump to Server</option></select></div>
+				<div class="tab_widget"><i class="fa fa-chevron-down"></i><select id="fe_jump_to_group" class="subtitle_menu" onChange="$P().jumpToGroup($(this).val())"><option value="">Jump to Group</option></select></div>
+				<div class="clear"></div>
+			</div>
+			
+			<div id="main" class="main">
+				<div id="d_controls" style="display:none">
+					<fieldset>
+						<legend>Controls</legend>
+						<div id="d_ctrl_server" style="float:left; margin-right:20px; display:none">
+							<div class="info_label">Server</div>
+							<select id="fe_ctrl_server" onChange="$P().jumpToServer()"></select>
+						</div>
+						<div id="d_ctrl_group" style="float:left; margin-right:20px; display:none">
+							<div class="info_label">Group</div>
+							<select id="fe_ctrl_group" onChange="$P().jumpToGroup()"></select>
+						</div>
+						<div style="float:left;">
+							<div class="info_label">Time Scale</div>
+							<select id="fe_ctrl_mode" onChange="$P().setControlMode()"></select>
+						</div>
+						<div id="d_ctrl_date" style="float:left; margin-left:20px; display:none">
+							<div class="info_label">Date</div>
+							<select id="fe_ctrl_year" onChange="$P().setControlMode()">
+								<option value="">Loading...</option>
+							</select>
+							<select id="fe_ctrl_month" onChange="$P().setControlMode()">
+								<option value="01">January</option>
+								<option value="02">February</option>
+								<option value="03">March</option>
+								<option value="04">April</option>
+								<option value="05">May</option>
+								<option value="06">June</option>
+								<option value="07">July</option>
+								<option value="08">August</option>
+								<option value="09">September</option>
+								<option value="10">October</option>
+								<option value="11">November</option>
+								<option value="12">December</option>
+							</select>
+							<select id="fe_ctrl_day" onChange="$P().setControlMode()">
+								<option value="01">1</option>
+								<option value="02">2</option>
+								<option value="03">3</option>
+								<option value="04">4</option>
+								<option value="05">5</option>
+								<option value="06">6</option>
+								<option value="07">7</option>
+								<option value="08">8</option>
+								<option value="09">9</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+								<option value="13">13</option>
+								<option value="14">14</option>
+								<option value="15">15</option>
+								<option value="16">16</option>
+								<option value="17">17</option>
+								<option value="18">18</option>
+								<option value="19">19</option>
+								<option value="20">20</option>
+								<option value="21">21</option>
+								<option value="22">22</option>
+								<option value="23">23</option>
+								<option value="24">24</option>
+								<option value="25">25</option>
+								<option value="26">26</option>
+								<option value="27">27</option>
+								<option value="28">28</option>
+								<option value="29">29</option>
+								<option value="30">30</option>
+								<option value="31">31</option>
+							</select>
+							<select id="fe_ctrl_hour" onChange="$P().setControlMode()">
+								<option value="00">12 AM</option>
+								<option value="01">1 AM</option>
+								<option value="02">2 AM</option>
+								<option value="03">3 AM</option>
+								<option value="04">4 AM</option>
+								<option value="05">5 AM</option>
+								<option value="06">6 AM</option>
+								<option value="07">7 AM</option>
+								<option value="08">8 AM</option>
+								<option value="09">9 AM</option>
+								<option value="10">10 AM</option>
+								<option value="11">11 AM</option>
+								<option value="12">12 PM</option>
+								<option value="13">1 PM</option>
+								<option value="14">2 PM</option>
+								<option value="15">3 PM</option>
+								<option value="16">4 PM</option>
+								<option value="17">5 PM</option>
+								<option value="18">6 PM</option>
+								<option value="19">7 PM</option>
+								<option value="20">8 PM</option>
+								<option value="21">9 PM</option>
+								<option value="22">10 PM</option>
+								<option value="23">11 PM</option>
+							</select>
+						</div>
+						<div id="d_ctrl_range" style="float:left; margin-left:20px; display:none">
+							<div class="info_label">Current Data Range</div>
+							<div class="info_value" style="line-height:20px; margin-bottom:0px;"></div>
+						</div>
+						
+						<div style="float:right">
+							<div class="info_label">Navigation</div>
+							<span id="btn_nav_left" class="chart_size_icon" title="Jump Backward in Time" onMouseUp="$P().navCtrlBack()"><i class="mdi mdi-arrow-left-drop-circle-outline mdi-lg2"></i></span>
+							<span id="btn_nav_right" class="chart_size_icon" title="Jump Forward in Time" onMouseUp="$P().navCtrlForward()"><i class="mdi mdi-arrow-right-drop-circle-outline mdi-lg2"></i></span>
+						</div>
+						
+						<div style="float:right; margin-right:20px;">
+							<div class="info_label">Chart Size</div>
+							<span id="btn_csi_third" class="chart_size_icon" title="Small Charts" onMouseUp="$P().setChartSize('third')"><i class="mdi mdi-grid"></i></span>
+							<span id="btn_csi_half" class="chart_size_icon" title="Medium Charts" onMouseUp="$P().setChartSize('half')"><i class="mdi mdi-grid-large"></i></span>
+							<span id="btn_csi_full" class="chart_size_icon" title="Large Charts" onMouseUp="$P().setChartSize('full')"><i class="mdi mdi-square-outline mdi-lg2"></i></span>
+						</div>
+						
+						<div id="d_ctrl_opts" style="float:right; margin-right:20px; display:none">
+							<div class="info_label">Options</div>
+							<div class="info_value" style="margin-bottom:0px;">
+								<table cellspacing="0" cellpadding="0" style="border-collapse:collapse;"><tr><td><input type="checkbox" id="fe_ctrl_auto_refresh" value="1" onChange="$P().toggleAutoRefresh()"/></td><td><label for="fe_ctrl_auto_refresh" style="font-size:12px;">Auto-Refresh</label></td></tr></table>
+							</div>
+						</div>
+						
+						<div id="d_ctrl_filter" style="float:right; margin-right:20px;">
+							<div class="info_label">Filter Graphs</div>
+							<div class="info_value" style="margin-bottom:0px;">
+								<div class="sb_header_search_container" style="width:120px">
+									<input type="text" id="fe_ctrl_filter" class="sb_header_search" placeholder="" value=""/>
+									<div class="sb_header_search_icon" onMouseUp="$(this).prev().focus()"><i class="fa fa-search"></i></div>
+								</div>
+							</div>
+						</div>
+						
+						<div style="clear:both"></div>
+					</fieldset>
+				</div>
+				<div id="page_Home" style="display:none"></div>
+				<div id="page_Group" style="display:none"></div>
+				<div id="page_Server" style="display:none"></div>
+				<div id="page_MyAccount" style="display:none"></div>
+				<div id="page_Admin" style="display:none"></div>
+				<div id="page_Login" style="display:none"></div>
+			</div>
+			
+		</div>
+		
+		<div id="d_footer">
+			<div class="left">
+				<a href="https://github.com/jhuckaby/performa" target="_blank">Performa</a> is
+				&copy; 2019 by <a href="http://pixlcore.com" target="_blank">PixlCore</a>. 
+				Released under the <a href="https://github.com/jhuckaby/performa/blob/master/LICENSE.md" target="_blank">MIT License</a>.
+			</div>
+			<div id="d_footer_version" class="right">
+				
+			</div>
+			<div class="clear"></div>
+		</div>
+		
+	</div>
+	
+	<script src="js/external/jquery.min.js"></script>
+	<script src="js/external/apexcharts.min.js"></script>
+	
+	<!-- BUILD: COMBINE_SCRIPT_START -->
+	<script src="js/common/md5.js"></script>
+	<script src="js/common/oop.js"></script>
+	<script src="js/common/xml.js"></script>
+	<script src="js/common/tools.js"></script>
+	<script src="js/common/datetime.js"></script>
+	<script src="js/common/page.js"></script>
+	<script src="js/common/dialog.js"></script>
+	<script src="js/common/base.js"></script>
+	
+	<script src="js/app.js"></script>
+	<script src="js/pages/Base.class.js"></script>
+	<script src="js/pages/Home.class.js"></script>
+	<script src="js/pages/Group.class.js"></script>
+	<script src="js/pages/Server.class.js"></script>
+	<script src="js/pages/Login.class.js"></script>
+	<script src="js/pages/MyAccount.class.js"></script>
+	<script src="js/pages/Admin.class.js"></script>
+	<script src="js/pages/admin/Users.js"></script>
+	<script src="js/pages/admin/APIKeys.js"></script>
+	<script src="js/pages/admin/Activity.js"></script>
+	<script src="js/pages/admin/Alerts.js"></script>
+	<script src="js/pages/admin/Commands.js"></script>
+	<script src="js/pages/admin/Groups.js"></script>
+	<script src="js/pages/admin/Monitors.js"></script>
+	<!-- BUILD: COMBINE_SCRIPT_END -->
+	
+	<script src="/api/app/config?callback=app.receiveConfig"></script>
+
+</body>
+</html>

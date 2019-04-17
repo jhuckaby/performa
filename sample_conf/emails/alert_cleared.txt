@@ -1,0 +1,18 @@
+To: [/email_to]
+From: [/config/email_from]
+Subject: [/config/client/name] Alert Cleared: [/nice_hostname]: [/def/title]
+
+The following [/config/client/name] alert has been cleared: [/def/title]
+
+Hostname: [/params/hostname]
+IP Address: [/params/ip]
+Group: [/nice_group]
+Date/Time: [/date_time]
+Expression: [/def/expression]
+Elapsed: [/elapsed_nice]
+
+Live Server View:
+[/self_url]
+
+Regards,
+The Performa Team

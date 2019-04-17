@@ -1,0 +1,64 @@
+{
+	"name": "performa",
+	"version": "1.0.0",
+	"description": "A multi-server monitoring system with a web based UI.",
+	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
+	"homepage": "https://github.com/jhuckaby/performa",
+	"license": "MIT",
+	"main": "lib/main.js",
+	"scripts": {
+		"start": "bin/control.sh start",
+		"debug": "bin/control.sh debug",
+		"test": "pixl-unit lib/test.js",
+		"boot": "pixl-boot install --script bin/control.sh",
+		"unboot": "pixl-boot uninstall"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/jhuckaby/performa"
+	},
+	"bugs": {
+		"url": "https://github.com/jhuckaby/performa/issues"
+	},
+	"keywords": [
+		"node",
+		"javascript",
+		"webapp"
+	],
+	"dependencies": {
+		"async": "2.6.0",
+		"ws": "4.1.0",
+		"mime": "2.3.1",
+		"mkdirp": "0.5.1",
+		"glob": "5.0.15",
+		"uglify-js": "2.8.22",
+		"bcrypt-node": "0.1.0",
+		"notevil": "1.1.0",
+		"jquery": "3.3.1",
+		"zeroupload": "^1.0.0",
+		"font-awesome": "4.7.0",
+		"@mdi/font": "3.5.94",
+		"apexcharts": "3.6.3",
+		"pixl-args": "^1.0.3",
+		"pixl-cli": "^1.0.8",
+		"pixl-config": "^1.0.4",
+		"pixl-webapp": "^2.0.0",
+		"pixl-class": "^1.0.2",
+		"pixl-tools": "^1.0.22",
+		"pixl-logger": "^1.0.13",
+		"pixl-json-stream": "^1.0.4",
+		"pixl-request": "^1.0.20",
+		"pixl-mail": "^1.0.9",
+		"pixl-perf": "^1.0.5",
+		"pixl-server": "^1.0.13",
+		"pixl-server-storage": "^2.0.14",
+		"pixl-server-web": "^1.1.5",
+		"pixl-server-api": "^1.0.1",
+		"pixl-server-user": "^1.0.8",
+		"pixl-boot": "^1.0.0",
+		"performa-satellite": "jhuckaby/performa-satellite"
+	},
+	"devDependencies": {
+		"pixl-unit": "^1.0.9"
+	}
+}

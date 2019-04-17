@@ -1,0 +1,372 @@
+{
+	"storage": [
+		[ "put", "users/admin", {
+			"username": "admin",
+			"password": "$2a$10$VAF.FNvz1JqhCAB5rCh9GOa965eYWH3fcgWIuQFAmsZnnVS/.ye1y",
+			"full_name": "Administrator",
+			"email": "admin@localhost",
+			"active": 1,
+			"modified": 1434125333,
+			"created": 1434125333,
+			"salt": "salty",
+			"privileges": {
+				"admin": 1
+			}
+		} ],
+		[ "listCreate", "global/users", { "page_size": 100 } ],
+		[ "listPush", "global/users", { "username": "admin" } ],
+		[ "listCreate", "global/api_keys", {} ],
+		
+		[ "listCreate", "global/groups", { "page_size": 100 } ],
+		[ "listPush", "global/groups", {
+			"id": "main",
+			"title": "Main Group",
+			"hostname_match": "_HOSTNAME_",
+			"alerts_enabled": true,
+			"sort_order": 0,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		
+		[ "listCreate", "global/monitors", { "page_size": 100 } ],
+		[ "listPush", "global/monitors", {
+			"id": "load_avg",
+			"title": "CPU Load Average",
+			"source": "[load/0]",
+			"data_type": "float",
+			"suffix": "",
+			"merge_type": "avg",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 0,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "mem_used",
+			"title": "Memory in Use",
+			"source": "[memory/used]",
+			"data_type": "bytes",
+			"suffix": "",
+			"merge_type": "",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 1,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "mem_free",
+			"title": "Available Memory",
+			"source": "[memory/available]",
+			"data_type": "bytes",
+			"suffix": "",
+			"merge_type": "avg",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 2,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "tcp_conns",
+			"title": "Open TCP Connections",
+			"source": "[stats/network/conns]",
+			"data_type": "integer",
+			"suffix": "",
+			"merge_type": "avg",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 3,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "disk_usage_root",
+			"title": "Disk Usage % (Root)",
+			"source": "[mounts/root/use]",
+			"data_type": "float",
+			"suffix": "%",
+			"merge_type": "avg",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 4,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "disk_read_sec",
+			"title": "Disk Read (Bytes)",
+			"source": "[stats/fs/rx]",
+			"delta": true,
+			"divide_by_delta": true,
+			"data_type": "bytes",
+			"suffix": "/sec",
+			"merge_type": "",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 5,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "disk_write_sec",
+			"title": "Disk Write (Bytes)",
+			"source": "[stats/fs/wx]",
+			"delta": true,
+			"divide_by_delta": true,
+			"data_type": "bytes",
+			"suffix": "/sec",
+			"merge_type": "",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 6,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "disk_iops_sec",
+			"title": "Disk I/O Operations",
+			"source": "[stats/io/tIO]",
+			"delta": true,
+			"divide_by_delta": true,
+			"data_type": "integer",
+			"suffix": "/sec",
+			"merge_type": "",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 7,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "io_wait",
+			"title": "CPU I/O Wait %",
+			"source": "[cpu/percentages/iowait]",
+			"data_type": "float",
+			"suffix": "%",
+			"merge_type": "",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 8,
+			"notes": "This is for Linux only.",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "open_files",
+			"title": "Open File Descriptors",
+			"source": "[commands/open_files]",
+			"data_type": "integer",
+			"data_match": "(\\d+)",
+			"suffix": "",
+			"merge_type": "",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 9,
+			"notes": "This is for Linux only.",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "os_bytes_in_sec",
+			"title": "Bandwidth In (Bytes)",
+			"source": "[stats/network/rx_bytes]",
+			"delta": true,
+			"divide_by_delta": true,
+			"data_type": "bytes",
+			"suffix": "/sec",
+			"merge_type": "total",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 10,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "os_bytes_out_sec",
+			"title": "Bandwidth Out (Bytes)",
+			"source": "[stats/network/tx_bytes]",
+			"delta": true,
+			"divide_by_delta": true,
+			"data_type": "bytes",
+			"suffix": "/sec",
+			"merge_type": "total",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 11,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
+			"id": "total_procs",
+			"title": "Total Processes",
+			"source": "[processes/all]",
+			"data_type": "integer",
+			"suffix": "",
+			"merge_type": "",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 12,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		
+		[ "listCreate", "global/alerts", { "page_size": 100 } ],
+		[ "listPush", "global/alerts", {
+			"id": "load_avg_high",
+			"title": "High CPU Load",
+			"expression": "[monitors/load_avg] >= ([cpu/cores] + 1)",
+			"message": "CPU load average is too high: [monitors/load_avg] ([cpu/cores] CPU cores)",
+			"group_match": ".+",
+			"email": "",
+			"web_hook": "",
+			"monitor_id": "load_avg",
+			"enabled": true,
+			"notes": "",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/alerts", {
+			"id": "mem_free_low",
+			"title": "Low Memory",
+			"expression": "[memory/available] < ([memory/total] * 0.05)",
+			"message": "Less than 5% of total memory is available ([bytes:memory/available] of [bytes:memory/total])",
+			"group_match": ".+",
+			"monitor_id": "mem_free",
+			"enabled": true,
+			"notes": "",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/alerts", {
+			"id": "io_wait_high",
+			"title": "High I/O Wait",
+			"expression": "[monitors/io_wait] >= 75",
+			"message": "Disk I/O wait is too high: [pct:monitors/io_wait]",
+			"group_match": ".+",
+			"monitor_id": "io_wait",
+			"enabled": true,
+			"notes": "",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/alerts", {
+			"id": "disk_usage_root_high",
+			"title": "Disk Full",
+			"expression": "[monitors/disk_usage_root] >= 90",
+			"message": "Root filesystem is [pct:monitors/disk_usage_root] full.",
+			"group_match": ".+",
+			"monitor_id": "disk_usage_root",
+			"enabled": true,
+			"notes": "",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		
+		[ "listCreate", "global/commands", { "page_size": 100 } ],
+		[ "listPush", "global/commands", {
+			"id": "open_files",
+			"title": "Count Open Files",
+			"exec": "/bin/sh",
+			"script": "cat /proc/sys/fs/file-nr",
+			"group_match": ".+",
+			"enabled": true,
+			"format": "text",
+			"timeout": 5,
+			"notes": "This is for Linux only.",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		
+		[ "put", "global/state", {} ]
+	],
+	
+	"build": {
+		"common": [
+			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.map", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/apexcharts/dist/apexcharts.min.js", "htdocs/js/external/" ],
+			
+			[ "symlinkCompress", "node_modules/zeroupload/zeroupload.min.js", "htdocs/js/external/" ],
+			
+			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.min.css", "htdocs/css/" ],
+			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.css.map", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/font-awesome/fonts/*", "htdocs/fonts/" ],
+			
+			[ "symlinkCompress", "node_modules/@mdi/font/css/materialdesignicons.min.css", "htdocs/css/" ],
+			[ "symlinkCompress", "node_modules/@mdi/font/css/materialdesignicons.min.css.map", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/@mdi/font/fonts/*", "htdocs/fonts/" ],
+			
+			[ "symlinkFile", "node_modules/pixl-webapp/js", "htdocs/js/common" ],
+			[ "symlinkFile", "node_modules/pixl-webapp/css/base.css", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/pixl-webapp/fonts/*", "htdocs/fonts/" ],
+			
+			[ "chmodFiles", "755", "bin/*" ]
+		],
+		"dev": [
+			[ "deleteFiles", "htdocs/css/_combo*" ],
+			[ "deleteFiles", "htdocs/js/_combo*" ],
+			[ "deleteFile", "htdocs/index.html" ],
+			[ "deleteFile", "htdocs/index.html.gz" ],
+			[ "symlinkFile", "htdocs/index-dev.html", "htdocs/index.html" ],
+			[ "symlinkFile", "sample_conf", "conf" ]
+		],
+		"dist": [
+			{
+				"action": "generateSecretKey",
+				"file": "sample_conf/config.json",
+				"key": "secret_key"
+			},
+			[ "copyDir", "sample_conf", "conf", true ],
+			[ "copyFile", "htdocs/index-dev.html", "htdocs/index.html" ],
+			{
+				"action": "bundleCompress",
+				"uglify": false,
+				"header": "/* Copyright (c) PixlCore.com, MIT License. https://github.com/jhuckaby/performa */",
+				"dest_bundle": "htdocs/js/_combo.js",
+				"html_file": "htdocs/index.html",
+				"match_key": "COMBINE_SCRIPT",
+				"dest_bundle_tag": "<script src=\"js/_combo.js\"></script>"
+			},
+			{
+				"action": "bundleCompress",
+				"strip_source_maps": true,
+				"dest_bundle": "htdocs/css/_combo.css",
+				"html_file": "htdocs/index.html",
+				"match_key": "COMBINE_STYLE",
+				"dest_bundle_tag": "<link rel=\"stylesheet\" href=\"css/_combo.css\">"
+			},
+			{
+				"action": "printMessage",
+				"lines": [
+					"Welcome to Performa!",
+					"First time installing?  You should configure your settings in '/opt/performa/conf/config.json'.",
+					"Next, type: '/opt/performa/bin/control.sh setup' to init storage.",
+					"Then, to start the service, type: '/opt/performa/bin/control.sh start'.",
+					"For full docs, please visit: http://github.com/jhuckaby/performa",
+					"Enjoy!"
+				]
+			}
+		]
+	}
+}
