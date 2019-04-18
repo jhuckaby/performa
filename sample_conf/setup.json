@@ -231,7 +231,7 @@
 			"id": "load_avg_high",
 			"title": "High CPU Load",
 			"expression": "[monitors/load_avg] >= ([cpu/cores] + 1)",
-			"message": "CPU load average is too high: [monitors/load_avg] ([cpu/cores] CPU cores)",
+			"message": "CPU load average is too high: [float:monitors/load_avg] ([cpu/cores] CPU cores)",
 			"group_match": ".+",
 			"email": "",
 			"web_hook": "",

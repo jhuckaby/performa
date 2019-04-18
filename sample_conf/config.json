@@ -12,7 +12,7 @@
 	"log_archive_path": "logs/archives/[yyyy]/[mm]/[dd]/[filename]-[yyyy]-[mm]-[dd].log.gz",
 	"log_crashes": true,
 	"pid_file": "logs/performa.pid",
-	"debug_level": 9,
+	"debug_level": 5,
 	"maintenance": "04:00",
 	"expiration": "10 years",
 	"monitor_self": true,

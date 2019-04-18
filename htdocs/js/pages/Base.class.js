@@ -1044,7 +1044,7 @@ Class.subclass( Page, "Page.Base", {
 			title = ucfirst( mon_def.merge_type ) + " " + mon_def.title;
 		}
 		if (args.hostname) {
-			title += ' - ' + args.hostname;
+			title += ' - ' + app.formatHostname(args.hostname);
 		}
 		else if (args.group) {
 			if (app.getPref('ggt_' + mon_id)) {

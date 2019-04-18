@@ -290,7 +290,7 @@ This can be a partial path, relative to the Performa base directory (`/opt/perfo
 
 ### debug_level
 
-The level of verbosity in the debug logs.  It ranges from `1` (very quiet) to `10` (extremely loud).  The default value is `9`.
+The level of verbosity in the debug logs.  It ranges from `1` (very quiet) to `10` (extremely loud).  The default value is `5`.
 
 ### maintenance
 
@@ -610,6 +610,24 @@ This checks to see if the current CPU load average is equal to or above the numb
 
 **Note**: If you use any *delta* monitors for your alert expression, make sure you target the value in the `[deltas/` object, not the `[monitors/` object.  The latter contains the raw absolute counter value (likely not what you want), whereas the former contains the computed delta value.
 
+### Alert Messages
+
+Alert messages may also use the `[square/bracket/with/slashes]` syntax as described in [data sources](#data-sources) above, but they also support a number of special prefixes for formatting data values for display.  Example:
+
+```
+Less than 5% of total memory is available ([bytes:memory/available] of [bytes:memory/total])
+```
+
+In this example alert message, both the `memory/available` and `memory/total` values have a `bytes:` prefix.  This interprets the value as a number of bytes, and converts the output to human-readable format (e.g. `4.5 MB`).  Here is a list of all the supported prefixes:
+
+| Prefix | Description |
+|--------|-------------|
+| `bytes:` | Interpret the value as bytes, and convert to a human-readable format, e.g. `3.1 GB`. |
+| `commify:` | Convert the number to an integer and apply US-style number formatting, e.g. commas every thousand. |
+| `pct:` | Convert the number to a floating point decimal with no more than 2 digits after the decimal, and append a `%` symbol. |
+| `integer:` | Convert the number to an integer (floor to nearest). |
+| `float:` | Convert the number to a floating point decimal with no more than 2 digits after the decimal. |
+
 ### Built-in Alerts
 
 Performs ships with the following built-in alerts.  You can of course change or delete these.
@@ -640,7 +658,7 @@ When an alert fires (and when it clears), you can configure a "web hook" to be s
 		"id": "load_avg_high",
 		"title": "High CPU Load",
 		"expression": "[monitors/load_avg] >= ([cpu/cores] + 1)",
-		"message": "CPU load average is too high: [monitors/load_avg] ([cpu/cores] CPU cores)",
+		"message": "CPU load average is too high: [float:monitors/load_avg] ([cpu/cores] CPU cores)",
 		"group_match": ".+",
 		"email": "",
 		"web_hook": "http://my.notify.server.com/notify-me",
