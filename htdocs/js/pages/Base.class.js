@@ -1493,7 +1493,7 @@ Class.subclass( Page, "Page.Base", {
 		for (var idx = 0, len = config.groups.length; idx < len; idx++) {
 			var group = config.groups[idx];
 			if (this.div.find('#' + dom_prefix + '_group_' + group.id).is(':checked')) {
-				group_list.push( group_id );
+				group_list.push( group.id );
 			}
 		}
 		

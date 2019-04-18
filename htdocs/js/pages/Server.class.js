@@ -591,7 +591,7 @@ Class.subclass( Page.Base, "Page.Server", {
 			// column 1 (info)
 			html += '<div class="server_info_column">';
 				html += '<div class="info_label">Hostname</div>';
-				html += '<div class="info_value">' + args.hostname + '</div>';
+				html += '<div class="info_value">' + app.formatHostname(args.hostname) + '</div>';
 				
 				html += '<div class="info_label">IP Address</div>';
 				html += '<div class="info_value">' + (metadata.ip || 'n/a') + '</div>';

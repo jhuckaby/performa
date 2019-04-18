@@ -435,7 +435,7 @@ Class.add( Page.Admin, {
 		html += get_form_table_spacer();
 		
 		// overview (merge_type)
-		html += get_form_table_row( 'Overview', '<select id="fe_em_merge_type">' + render_menu_options([['', "None"], ['average', "Average"], ['total', "Total"]], monitor.merge_type) + '</select>' );
+		html += get_form_table_row( 'Overview', '<select id="fe_em_merge_type">' + render_menu_options([['', "None"], ['avg', "Average"], ['total', "Total"]], monitor.merge_type) + '</select>' );
 		html += get_form_table_caption( "Select the method by which multi-server data should be merged together for the overview page.<br/>Select 'None' to hide this monitor on the overview page entirely." );
 		html += get_form_table_spacer();
 		

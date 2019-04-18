@@ -169,7 +169,7 @@ Class.add( Page.Admin, {
 				
 				// servers
 				case 'server_add':
-					desc = 'New server added to ' + item.group.title + ': <b>' + item.hostname + '</b> (' + item.ip + ')';
+					desc = 'New server added to ' + item.group.title + ': <b>' + app.formatHostname(item.hostname) + '</b> (' + item.ip + ')';
 				break;
 				
 				// state
