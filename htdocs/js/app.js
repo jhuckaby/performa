@@ -148,8 +148,8 @@ app.extend({
 		if (old_group) $('#fe_ctrl_group').val( old_group );
 	},
 	
-	initJumpMenus: function() {
-		// populate tab bar "jump to" menus with servers, groups
+	getRecentServerMenuOptionsHTML: function() {
+		// get nice server list with sorted groups (and sorted servers in groups)
 		var self = this;
 		
 		// jump to server menu
@@ -173,15 +173,14 @@ app.extend({
 		
 		var num_menu_groups = num_keys(menu_groups);
 		var menu_html = '';
-		menu_html += '<option value="" disabled>Jump to Server</option>';
 		
-		hash_keys_to_array(menu_groups).sort().forEach( function(group_id) {
+		hash_keys_to_array(menu_groups).sort().forEach( function(group_id, idx) {
 			var group_def = find_object( config.groups, { id: group_id } );
 			if (!group_def) return;
 			var group_hostnames = menu_groups[group_id].sort();
 			
 			if (num_menu_groups > 1) {
-				menu_html += '<option value="" disabled></option>';
+				if (idx > 0) menu_html += '<option value="" disabled></option>';
 				menu_html += '<optgroup label="' + group_def.title + '">';
 			}
 			menu_html += group_hostnames.map( function(hostname) {
@@ -192,6 +191,17 @@ app.extend({
 			}
 		});
 		
+		return menu_html;
+	},
+	
+	initJumpMenus: function() {
+		// populate tab bar "jump to" menus with servers, groups
+		var self = this;
+		
+		var menu_html = '';
+		menu_html += '<option value="" disabled>Jump to Server</option>';
+		menu_html += '<option value="" disabled></option>';
+		menu_html += this.getRecentServerMenuOptionsHTML();
 		$('#fe_jump_to_server').empty().append( menu_html ).val('');
 		
 		// jump to group menu

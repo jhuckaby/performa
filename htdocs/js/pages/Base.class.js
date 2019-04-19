@@ -435,13 +435,7 @@ Class.subclass( Page, "Page.Base", {
 		if (args.hostname) {
 			if (!app.recent_hostnames[args.hostname]) app.recent_hostnames[args.hostname] = 1;
 			$('#d_ctrl_server').show();
-			$('#fe_ctrl_server').empty();
-			
-			hash_keys_to_array(app.recent_hostnames).sort().forEach( function(hostname) {
-				$('#fe_ctrl_server').append( '<option value="' + hostname + '">' + self.formatHostname(hostname) + '</option>' );
-			});
-			
-			$('#fe_ctrl_server').val( args.hostname );
+			$('#fe_ctrl_server').empty().append( app.getRecentServerMenuOptionsHTML() ).val( args.hostname );
 		}
 		else $('#d_ctrl_server').hide();
 		
@@ -1562,20 +1556,17 @@ Class.subclass( Page, "Page.Base", {
 		var html = '';
 		if (typeof($elem) == 'string') $elem = $($elem);
 		
+		if (!num_keys(app.recent_hostnames)) {
+			return app.doError("Sorry, no servers have sent any data into the system yet.");
+		}
+		
 		html += '<div style="width:500px; font-size:12px; margin-bottom:20px;">';
 		html += "Use this tool to help locate a specific server metric, by exploring the actual data being sent in by your servers.  Click on any metric key below to construct a correct <code>[data/path]</code> and insert it back into the form field.";
 		html += '</div>';
 		
-		var server_items = hash_keys_to_array(app.recent_hostnames).sort().map( function(hostname) {
-			return [ hostname, self.formatHostname(hostname) ];
-		});
-		if (!server_items.length) {
-			return app.doError("Sorry, no servers have sent any data into the system yet.");
-		}
-		
 		html += '<center><table>' + 
 			// get_form_table_spacer() + 
-			get_form_table_row('Server:', '<select id="fe_explore_server" onChange="$P().populateHostDataExplorer($(this).val())">' + render_menu_options(server_items, '') + '</select>') + 
+			get_form_table_row('Server:', '<select id="fe_explore_server" onChange="$P().populateHostDataExplorer($(this).val())">' + app.getRecentServerMenuOptionsHTML() + '</select>') + 
 			get_form_table_caption("Select the server hostname to explore metrics for.");
 			// get_form_table_spacer('transparent');
 		
@@ -1600,7 +1591,7 @@ Class.subclass( Page, "Page.Base", {
 			} // user clicked yes
 		} ); // app.confirm
 		
-		this.populateHostDataExplorer( server_items[0][0] );
+		this.populateHostDataExplorer( $('#fe_explore_server').val() || first_key(app.recent_hostnames) );
 	},
 	
 	populateHostDataExplorer: function(hostname) {
@@ -1619,7 +1610,7 @@ Class.subclass( Page, "Page.Base", {
 				var branch = branches.shift();
 				var indent_px = Math.max(0, branch.indent) * 20;
 				
-				if (typeof(branch.value) == 'object') {
+				if (branch.value && (typeof(branch.value) == 'object')) {
 					if (branch.key) {
 						html += '<div class="explore_item" style="margin-left:' + indent_px + 'px"><i class="fa fa-folder-open-o">&nbsp;</i><b>' + branch.key + '</b></div>';
 					}

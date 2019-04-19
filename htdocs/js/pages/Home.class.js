@@ -63,10 +63,22 @@ Class.subclass( Page.Base, "Page.Home", {
 		// figure out which groups we actually have data for
 		this.groups = [];
 		var all_groups = {};
+		var group_server_ranges = {};
 		
 		this.rows.forEach( function(row) {
 			if (row.groups) {
-				for (var group_id in row.groups) all_groups[group_id] = 1;
+				for (var group_id in row.groups) {
+					all_groups[group_id] = 1;
+					
+					var count = row.groups[group_id].count || 0;
+					if (count) {
+						if (!(group_id in group_server_ranges)) {
+							group_server_ranges[group_id] = { max: 0, min: 999999 };
+						}
+						if (count > group_server_ranges[group_id].max) group_server_ranges[group_id].max = count;
+						if (count < group_server_ranges[group_id].min) group_server_ranges[group_id].min = count;
+					}
+				}
 			}
 		});
 		if (!num_keys(all_groups)) {
@@ -100,7 +112,22 @@ Class.subclass( Page.Base, "Page.Home", {
 			if (!monitors.length) return;
 			
 			html += '<fieldset class="overview_group">';
-			html += '<legend>' + self.getNiceGroup(group_def) + '</legend>';
+			html += '<legend>' + self.getNiceGroup(group_def);
+			if (group_server_ranges[group_def.id].max) {
+				html += '<span class="ov_group_legend_count">(';
+				if (group_server_ranges[group_def.id].min != group_server_ranges[group_def.id].max) {
+					// server counts varied across range
+					html += commify(group_server_ranges[group_def.id].min) + ' - ' + 
+						+ commify(group_server_ranges[group_def.id].max) + ' servers';
+				}
+				else {
+					// consistent number of servers across range
+					html += commify(group_server_ranges[group_def.id].min) + ' ' + 
+						pluralize('server', group_server_ranges[group_def.id].min);
+				}
+				html += ')</span>';
+			}
+			html += '</legend>';
 			
 			// now insert empty graphs for each monitor in group
 			html += '<div class="graphs overview size_' + app.getPref('ov_graph_size') + '">';
@@ -412,15 +439,14 @@ Class.subclass( Page.Base, "Page.Home", {
 	
 	getNiceGroup: function(item) {
 		// get formatted group with icon, plus optional link
-		var width = 500;
 		var link = true;
+		var html = '';
 		if (!item) return '(None)';
 		
 		var query = { group: item.id };
 		if (this.args && ('offset' in this.args)) query.offset = this.args.offset;
 		if (this.args && this.args.length) query.length = this.args.length;
 		
-		var html = '<div class="ellip" style="max-width:' + width + 'px;">';
 		var icon = '<i class="mdi mdi-server-network">&nbsp;</i>';
 		if (link) {
 			html += '<a href="#Group' + compose_query_string(query) + '" style="text-decoration:none">';
@@ -429,7 +455,6 @@ Class.subclass( Page.Base, "Page.Home", {
 		else {
 			html += icon + item.title;
 		}
-		html += '</div>';
 		
 		return html;
 	},

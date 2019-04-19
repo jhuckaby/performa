@@ -213,8 +213,12 @@ input.mono {
 }
 
 .explore_item {
+	height: 20px;
 	line-height: 20px;
 	font-size: 13px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /* Password Stuff */
@@ -611,4 +615,12 @@ fieldset.overview_group {
 fieldset.overview_group > legend {
 	font-size: 16px;
 	font-weight: bold;
+}
+
+.ov_group_legend_count {
+	position: relative; 
+	padding-left: 6px;
+	top: -1px; 
+	font-size: 12px; 
+	color: var(--header-text-color);
 }
