@@ -51,8 +51,8 @@ log_file = log_dir + '/install.log';
 logonly( "\nStarting install run: " + (new Date()).toString() + "\n" );
 
 print( 
-	"\nAPP_NAME Installer v" + installer_version + "\n" + 
-	"Copyright (c) 2018 PixlCore.com. MIT Licensed.\n" + 
+	"\nPerforma Installer v" + installer_version + "\n" + 
+	"Copyright (c) 2019 PixlCore.com. MIT Licensed.\n" + 
 	"Log File: " + log_file + "\n\n" 
 );
 

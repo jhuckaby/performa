@@ -1,6 +1,6 @@
 {
 	"name": "performa",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A multi-server monitoring system with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
 	"homepage": "https://github.com/jhuckaby/performa",
@@ -56,7 +56,7 @@
 		"pixl-server-api": "^1.0.1",
 		"pixl-server-user": "^1.0.8",
 		"pixl-boot": "^1.0.0",
-		"performa-satellite": "jhuckaby/performa-satellite"
+		"performa-satellite": "^1.0.0"
 	},
 	"devDependencies": {
 		"pixl-unit": "^1.0.9"
