@@ -82,6 +82,7 @@
 		+ [Built-in Monitors](#built-in-monitors)
 	* [Alerts](#alerts)
 		+ [Alert Expressions](#alert-expressions)
+		+ [Alert Messages](#alert-messages)
 		+ [Built-in Alerts](#built-in-alerts)
 		+ [Alert Web Hooks](#alert-web-hooks)
 	* [Commands](#commands)
