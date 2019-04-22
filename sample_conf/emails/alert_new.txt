@@ -12,6 +12,9 @@ Date/Time: [/date_time]
 Expression: [/def/expression]
 Evaluation: [/alert/exp]
 
+Snapshot Detail View:
+[/snapshot_url]
+
 Live Server View:
 [/self_url]
 

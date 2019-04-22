@@ -107,12 +107,19 @@ Class.subclass( Page.Base, "Page.Server", {
 		});
 		
 		var html = '';
-		// html += '<h1>' + this.args.hostname + '</h1>';
+		// html += '<h1>' + app.formatHostname(args.hostname) + '</h1>';
+		html += '<div class="subtitle" style="margin-top:10px; margin-bottom:15px;">';
+			html += '<i class="mdi mdi-desktop-tower">&nbsp;</i>' + app.formatHostname(args.hostname) + "";
+			html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().editServerWatch()"><i class="mdi mdi-eye mdi-lg">&nbsp;</i><b>Watch Server...</b></span></div>';
+			html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().takeSnapshot()"><i class="fa fa-camera">&nbsp;</i><b>Take Snapshot</b></span></div>';
+			html += '<div class="clear"></div>';
+		html += '</div>';
 		
 		// insert alerts and server info here
 		// (will be populated later)
 		html += '<fieldset id="fs_server_alerts" style="margin-top:10px; display:none"></fieldset>';
 		html += '<fieldset id="fs_server_info" style="margin-top:10px; display:none"></fieldset>';
+		html += '<fieldset id="fs_server_cpus" style="margin-top:10px; display:none"></fieldset>';
 		
 		html += '<div class="graphs server size_' + app.getPref('graph_size') + '" style="margin-top:10px;">';
 		
@@ -397,6 +404,7 @@ Class.subclass( Page.Base, "Page.Server", {
 			'<div class="pie_overlay_title">' + pie.title + '</div>' + 
 			'<div class="pie_overlay_subtitle">' + pie.subtitle + '</div>'
 		);
+		$overlay.attr('title', pie.tooltip || '');
 		
 		if (pie.value > pie.max) pie.value = pie.max;
 		else if (pie.value < 0) pie.value = 0;
@@ -459,6 +467,7 @@ Class.subclass( Page.Base, "Page.Server", {
 		var $overlay = $cont.find('div.server_pie_overlay');
 		
 		$overlay.find('.pie_overlay_subtitle').html( pie.subtitle );
+		$overlay.attr('title', pie.tooltip || '');
 		
 		if (pie.value > pie.max) pie.value = pie.max;
 		else if (pie.value < 0) pie.value = 0;
@@ -510,6 +519,7 @@ Class.subclass( Page.Base, "Page.Server", {
 				html += '<th>Detail</th>';
 				html += '<th>Trigger</th>';
 				html += '<th>Date/Time</th>';
+				html += '<th>Actions</th>';
 			html += '</tr>';
 			
 			all_alerts.forEach( function(alert) {
@@ -524,6 +534,9 @@ Class.subclass( Page.Base, "Page.Server", {
 				html += '<td>' + alert.message + '</td>';
 				html += '<td style="font-family:monospace">' + alert_def.expression + '</pre></td>';
 				html += '<td>' + get_nice_date_time( alert.date ) + '</td>';
+				
+				var snap_id = alert.hostname + '/' + Math.floor( alert.date / 60 );
+				html += '<td><a href="#Snapshot?id=' + snap_id + '">View&nbsp;Snapshot</a></td>';
 				html += '</tr>';
 			});
 			
@@ -550,7 +563,26 @@ Class.subclass( Page.Base, "Page.Server", {
 				delete this.disk_graph;
 			}
 			this.div.find('#fs_server_info').empty().hide();
+			this.div.find('#fs_server_cpus').empty().hide();
 			return;
+		}
+		
+		var cpu_tooltip = '';
+		var mem_tooltip = '';
+		var disk_tooltip = '';
+		
+		if (metadata.data.load) {
+			var nice_load = metadata.data.load.map( function(num) { return short_float_str(num); } ).join(', ');
+			cpu_tooltip = "Load Averages: " + nice_load;
+		}
+		if (metadata.data.memory) {
+			var mem = metadata.data.memory;
+			mem_tooltip = get_text_from_bytes(mem.used) + " of " + get_text_from_bytes(mem.total) + " in use, " + get_text_from_bytes(mem.available) + " available (" + get_text_from_bytes(mem.free) + " free)";
+		}
+		if (metadata.data.mounts && metadata.data.mounts.root) {
+			var root_mount = metadata.data.mounts.root;
+			var avail_bytes = Math.max(0, root_mount.size - root_mount.used);
+			disk_tooltip = get_text_from_bytes(root_mount.used) + " of " + get_text_from_bytes(root_mount.size) + " in use, " + get_text_from_bytes(avail_bytes) + " available";
 		}
 		
 		// server info table: fs_server_info
@@ -558,23 +590,26 @@ Class.subclass( Page.Base, "Page.Server", {
 			// update existing graphs, do not redraw
 			this.updatePie( this.cpu_graph, {
 				id: 'd_server_pie_cpu',
-				subtitle: short_float(metadata.data.load ? metadata.data.load[0] : 0),
+				subtitle: short_float_str(metadata.data.load ? metadata.data.load[0] : 0),
 				value: metadata.data.load ? metadata.data.load[0] : 0,
-				max: metadata.data.cpu ? metadata.data.cpu.cores : 0
+				max: metadata.data.cpu ? metadata.data.cpu.cores : 0,
+				tooltip: cpu_tooltip
 			});
 			
 			this.updatePie( this.mem_graph, {
 				id: 'd_server_pie_mem',
 				subtitle: get_text_from_bytes(metadata.data.memory.used || 0),
 				value: metadata.data.memory.used || 0,
-				max: metadata.data.memory.total || 0
+				max: metadata.data.memory.total || 0,
+				tooltip: mem_tooltip
 			});
 			
 			this.updatePie( this.disk_graph, {
 				id: 'd_server_pie_disk',
 				subtitle: pct( metadata.data.mounts.root.use, 100, false ),
 				value: metadata.data.mounts.root.use || 0,
-				max: 100
+				max: 100,
+				tooltip: disk_tooltip
 			});
 			
 			// uptime may change
@@ -586,12 +621,12 @@ Class.subclass( Page.Base, "Page.Server", {
 			html += '<legend>Current Server Info</legend>';
 			
 			// flex (god help me)
-			html += '<div style="display:flex; justify-content:space-between; margin:5px 10px 5px 10px;">';
+			html += '<div style="display:flex; justify-content:space-between; margin:5px 10px 0px 10px;">';
 			
 			// column 1 (info)
 			html += '<div class="server_info_column">';
 				html += '<div class="info_label">Hostname</div>';
-				html += '<div class="info_value">' + app.formatHostname(args.hostname) + '</div>';
+				html += '<div class="info_value">' + args.hostname + '</div>';
 				
 				html += '<div class="info_label">IP Address</div>';
 				html += '<div class="info_value">' + (metadata.ip || 'n/a') + '</div>';
@@ -611,7 +646,8 @@ Class.subclass( Page.Base, "Page.Server", {
 				// metadata.ip
 				
 				html += '<div class="info_label">Group Membership</div>';
-				html += '<div class="info_value">' + this.getNiceGroup(group_def, '#Group' + compose_query_string(query)) + '</div>';
+				// html += '<div class="info_value">' + this.getNiceGroup(group_def, '#Group' + compose_query_string(query)) + '</div>';
+				html += '<div class="info_value">' + this.getNiceGroup(group_def, false) + '</div>';
 				
 				var nice_cores = 'n/a';
 				if (metadata.data.cpu && metadata.data.cpu.cores) {
@@ -690,9 +726,10 @@ Class.subclass( Page.Base, "Page.Server", {
 			this.cpu_graph = this.createPie({
 				id: 'd_server_pie_cpu',
 				title: 'Load',
-				subtitle: short_float(metadata.data.load ? metadata.data.load[0] : 0),
+				subtitle: short_float_str(metadata.data.load ? metadata.data.load[0] : 0),
 				value: metadata.data.load ? metadata.data.load[0] : 0,
-				max: metadata.data.cpu ? metadata.data.cpu.cores : 0
+				max: metadata.data.cpu ? metadata.data.cpu.cores : 0,
+				tooltip: cpu_tooltip
 			});
 			
 			this.mem_graph = this.createPie({
@@ -700,7 +737,8 @@ Class.subclass( Page.Base, "Page.Server", {
 				title: 'Mem',
 				subtitle: get_text_from_bytes(metadata.data.memory.used || 0),
 				value: metadata.data.memory.used || 0,
-				max: metadata.data.memory.total || 0
+				max: metadata.data.memory.total || 0,
+				tooltip: mem_tooltip
 			});
 			
 			this.disk_graph = this.createPie({
@@ -708,12 +746,24 @@ Class.subclass( Page.Base, "Page.Server", {
 				title: 'Disk',
 				subtitle: pct( metadata.data.mounts.root.use, 100, false ),
 				value: metadata.data.mounts.root.use || 0,
-				max: 100
+				max: 100,
+				tooltip: disk_tooltip
 			});
 		}
 		else {
 			// not real-time, hide entire fieldset
 			this.div.find('#fs_server_info').empty().hide();
+		}
+		
+		// cpu details
+		if (this.isRealTime() && metadata.data.cpu.cpus && num_keys(metadata.data.cpu.cpus)) {
+			this.div.find('#fs_server_cpus').html( 
+				this.getCPUTableHTML( metadata.data.cpu.cpus ) 
+			).show();
+		}
+		else {
+			// not real-time or no cpu details, hide entire fieldset
+			this.div.find('#fs_server_cpus').empty().hide();
 		}
 	},
 	
@@ -752,6 +802,93 @@ Class.subclass( Page.Base, "Page.Server", {
 		else {
 			this.div.find('#fs_all_filtered').hide();
 		}
+	},
+	
+	editServerWatch: function() {
+		// open server watch dialog
+		var self = this;
+		var args = this.args;
+		var html = '';
+		var watch_sel = 0;
+		var state = config.state;
+		
+		var watch_items = [
+			[0, "(Disable Watch)"],
+			app.getTimeMenuItem( 60 ),
+			app.getTimeMenuItem( 60 * 5 ),
+			app.getTimeMenuItem( 60 * 10 ),
+			app.getTimeMenuItem( 60 * 15 ),
+			app.getTimeMenuItem( 60 * 30 ),
+			app.getTimeMenuItem( 60 * 45 ),
+			app.getTimeMenuItem( 3600 ),
+			app.getTimeMenuItem( 3600 * 2 ),
+			app.getTimeMenuItem( 3600 * 3 ),
+			app.getTimeMenuItem( 3600 * 6 ),
+			app.getTimeMenuItem( 3600 * 12 ),
+			app.getTimeMenuItem( 86400 ),
+			app.getTimeMenuItem( 86400 * 2 ),
+			app.getTimeMenuItem( 86400 * 3 ),
+			app.getTimeMenuItem( 86400 * 7 ),
+			app.getTimeMenuItem( 86400 * 15 ),
+			app.getTimeMenuItem( 86400 * 30 )
+		];
+		
+		if (state.watches && state.watches[args.hostname] && (state.watches[args.hostname] > time_now())) {
+			// watch is currently enabled
+			html += '<div style="font-size:12px; margin-bottom:20px;">A watch is currently <b>enabled</b> on this server, and will be until <b>' + get_nice_date_time(state.watches[args.hostname], false, false) + '</b> (approximately ' + get_text_from_seconds(state.watches[args.hostname] - time_now(), false, true) + ' from now).  Use the menu below to reset the watch, or disable it entirely.</div>';
+			watch_sel = 0;
+		}
+		else {
+			// watch is disabled
+			html += '<div style="font-size:12px; margin-bottom:20px;">This server is not currently being watched.  Use the menu below to optionally set a watch timer, which will generate snapshots every minute until the timer expires.</div>';
+			watch_sel = 3600;
+		}
+		
+		html += '<center><table>' + 
+			// get_form_table_spacer() + 
+			get_form_table_row('Watch For:', '<select id="fe_watch_time">' + render_menu_options(watch_items, watch_sel) + '</select>') + 
+			get_form_table_caption("Select the duration for the server watch.") + 
+		'</table></center>';
+		
+		app.confirm( '<i class="mdi mdi-eye">&nbsp;</i>Watch Server', html, "Set Watch", function(result) {
+			app.clearError();
+			
+			if (result) {
+				var watch_time = parseInt( $('#fe_watch_time').val() );
+				var watch_date = time_now() + watch_time;
+				Dialog.hide();
+				
+				app.api.post( 'app/watch', { hostnames: [args.hostname], date: watch_date }, function(resp) {
+					// update local state and show message
+					if (!state.watches) state.watches = {};
+					
+					if (watch_time) {
+						app.showMessage('success', "Server will be watched for " + get_text_from_seconds(watch_time, false, true) + ".");
+						state.watches[ args.hostname ] = watch_date;
+					}
+					else {
+						app.showMessage('success', "Server watch has been disabled.");
+						delete state.watches[ args.hostname ];
+					}
+					
+				} ); // api.post
+			} // user clicked set
+		} ); // app.confirm
+	},
+	
+	takeSnapshot: function() {
+		// take a snapshot (i.e. 1 minute watch)
+		var args = this.args;
+		var state = config.state;
+		var watch_time = 60;
+		var watch_date = time_now() + watch_time;
+		
+		app.api.post( 'app/watch', { hostnames: [args.hostname], date: watch_date }, function(resp) {
+			// update local state and show message
+			if (!state.watches) state.watches = {};
+			app.showMessage('success', 'Your snapshot will be taken within a minute, and appear on the <a href="#Snapshot">Snapshots</a> tab.');
+			state.watches[ args.hostname ] = watch_date;
+		} ); // api.post
 	},
 	
 	onThemeChange: function(theme) {

@@ -115,6 +115,12 @@ Class.subclass( Page.Base, "Page.Group", {
 		
 		var html = '';
 		// html += '<h1>' + this.group.title + '</h1>';
+		html += '<div class="subtitle" style="margin-top:10px; margin-bottom:15px;">';
+			html += '<i class="mdi mdi-server-network">&nbsp;</i>' + this.group.title + "";
+			html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().editGroupWatch()"><i class="mdi mdi-eye mdi-lg">&nbsp;</i><b>Watch Group...</b></span></div>';
+			html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().takeSnapshot()"><i class="fa fa-camera">&nbsp;</i><b>Take Snapshot</b></span></div>';
+			html += '<div class="clear"></div>';
+		html += '</div>';
 		
 		// insert alerts and server list table here
 		// (will be populated later)
@@ -676,6 +682,7 @@ Class.subclass( Page.Base, "Page.Group", {
 				html += '<th>Detail</th>';
 				html += '<th>Trigger</th>';
 				html += '<th>Date/Time</th>';
+				html += '<th>Actions</th>';
 			html += '</tr>';
 			
 			all_alerts.forEach( function(alert) {
@@ -691,6 +698,10 @@ Class.subclass( Page.Base, "Page.Group", {
 				html += '<td>' + alert.message + '</td>';
 				html += '<td style="font-family:monospace">' + alert_def.expression + '</pre></td>';
 				html += '<td>' + get_nice_date_time( alert.date ) + '</td>';
+				
+				var snap_id = alert.hostname + '/' + Math.floor( alert.date / 60 );
+				html += '<td><a href="#Snapshot?id=' + snap_id + '">View&nbsp;Snapshot</a></td>';
+				
 				html += '</tr>';
 			});
 			
@@ -711,7 +722,8 @@ Class.subclass( Page.Base, "Page.Group", {
 		// group info table: fs_group_info
 		var extra_server_info = config.extra_server_info;
 		var html = '';
-		html += '<legend>' + this.group.title +'</legend>';
+		// html += '<legend>' + this.group.title +'</legend>';
+		html += '<legend>Group Members</legend>';
 		html += '<table class="fieldset_table" width="100%">';
 		html += '<tr>';
 			html += '<th>Hostname</th>';
@@ -880,6 +892,93 @@ Class.subclass( Page.Base, "Page.Group", {
 		else {
 			this.div.find('#fs_all_filtered').hide();
 		}
+	},
+	
+	editGroupWatch: function() {
+		// open group watch dialog
+		var self = this;
+		var args = this.args;
+		var html = '';
+		var watch_sel = 0;
+		var state = config.state;
+		var hostnames = this.hosts.map( function(host) { return host.hostname; } );
+		
+		var watch_items = [
+			[0, "(Disable Watch)"],
+			app.getTimeMenuItem( 60 ),
+			app.getTimeMenuItem( 60 * 5 ),
+			app.getTimeMenuItem( 60 * 10 ),
+			app.getTimeMenuItem( 60 * 15 ),
+			app.getTimeMenuItem( 60 * 30 ),
+			app.getTimeMenuItem( 60 * 45 ),
+			app.getTimeMenuItem( 3600 ),
+			app.getTimeMenuItem( 3600 * 2 ),
+			app.getTimeMenuItem( 3600 * 3 ),
+			app.getTimeMenuItem( 3600 * 6 ),
+			app.getTimeMenuItem( 3600 * 12 ),
+			app.getTimeMenuItem( 86400 ),
+			app.getTimeMenuItem( 86400 * 2 ),
+			app.getTimeMenuItem( 86400 * 3 ),
+			app.getTimeMenuItem( 86400 * 7 ),
+			app.getTimeMenuItem( 86400 * 15 ),
+			app.getTimeMenuItem( 86400 * 30 )
+		];
+		
+		html += '<div style="font-size:12px; margin-bottom:20px;">Use the menu below to optionally set watch timers <b>on all current servers in the group</b>.  This will generate snapshots every minute until the timer expires.</div>';
+		watch_sel = 3600;
+		
+		html += '<center><table>' + 
+			// get_form_table_spacer() + 
+			get_form_table_row('Watch For:', '<select id="fe_watch_time">' + render_menu_options(watch_items, watch_sel) + '</select>') + 
+			get_form_table_caption("Select the duration for the group watch.") + 
+		'</table></center>';
+		
+		app.confirm( '<i class="mdi mdi-eye">&nbsp;</i>Watch Group', html, "Set Watch", function(result) {
+			app.clearError();
+			
+			if (result) {
+				var watch_time = parseInt( $('#fe_watch_time').val() );
+				var watch_date = time_now() + watch_time;
+				Dialog.hide();
+				
+				app.api.post( 'app/watch', { hostnames: hostnames, date: watch_date }, function(resp) {
+					// update local state and show message
+					if (!state.watches) state.watches = {};
+					
+					if (watch_time) {
+						app.showMessage('success', "Group will be watched for " + get_text_from_seconds(watch_time, false, true) + ".");
+						hostnames.forEach( function(hostname) {
+							state.watches[ hostname ] = watch_date;
+						});
+					}
+					else {
+						app.showMessage('success', "Group watch has been disabled.");
+						hostnames.forEach( function(hostname) {
+							delete state.watches[ hostname ];
+						});
+					}
+					
+				} ); // api.post
+			} // user clicked set
+		} ); // app.confirm
+	},
+	
+	takeSnapshot: function() {
+		// take a snapshot (i.e. 1 minute watch)
+		var args = this.args;
+		var state = config.state;
+		var watch_time = 60;
+		var watch_date = time_now() + watch_time;
+		var hostnames = this.hosts.map( function(host) { return host.hostname; } );
+		
+		app.api.post( 'app/watch', { hostnames: hostnames, date: watch_date }, function(resp) {
+			// update local state and show message
+			if (!state.watches) state.watches = {};
+			app.showMessage('success', 'Your snapshot(s) will be taken within a minute, and appear on the <a href="#Snapshot">Snapshots</a> tab.');
+			hostnames.forEach( function(hostname) {
+				state.watches[ hostname ] = watch_date;
+			});
+		} ); // api.post
 	},
 	
 	onThemeChange: function(theme) {

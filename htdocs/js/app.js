@@ -43,6 +43,7 @@ app.extend({
 			{ ID: 'Home' },
 			{ ID: 'Group' },
 			{ ID: 'Server' },
+			{ ID: 'Snapshot' },
 			{ ID: 'Login' },
 			{ ID: 'MyAccount' },
 			{ ID: 'Admin' }
@@ -200,8 +201,9 @@ app.extend({
 		
 		var menu_html = '';
 		menu_html += '<option value="" disabled>Jump to Server</option>';
-		menu_html += '<option value="" disabled></option>';
-		menu_html += this.getRecentServerMenuOptionsHTML();
+		var temp_html = this.getRecentServerMenuOptionsHTML();
+		if (temp_html.match(/<optgroup/)) menu_html += '<option value="" disabled></option>';
+		menu_html += temp_html;
 		$('#fe_jump_to_server').empty().append( menu_html ).val('');
 		
 		// jump to group menu
@@ -655,6 +657,13 @@ window.Debug = {
 		// Pad a number with zeroes to achieve a desired total length (max 10)
 		return ('0000000000' + value).slice(0 - len);
 	}
+};
+
+function short_float_str(num) {
+	// force a float (add suffix if int)
+	num = '' + short_float(num);
+	if (num.match(/^\-?\d+$/)) num += ".0";
+	return num;
 };
 
 // Debounce Function Generator

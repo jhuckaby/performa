@@ -12,6 +12,7 @@ Class.add( Page.Admin, {
 		'^user': '<i class="fa fa-user">&nbsp;</i>User',
 		'^server': '<i class="mdi mdi-desktop-tower mdi-lg">&nbsp;</i>Server',
 		'^state': '<i class="mdi mdi-calendar-clock">&nbsp;</i>State', // mdi-lg
+		'^watch': '<i class="mdi mdi-history">&nbsp;</i>Watch', // mdi-lg
 		'^error': '<i class="fa fa-exclamation-triangle">&nbsp;</i>Error',
 		'^warning': '<i class="fa fa-exclamation-circle">&nbsp;</i>Warning'
 	},
@@ -93,6 +94,8 @@ Class.add( Page.Admin, {
 				case 'alert_new':
 					desc = 'Alert Triggered: <b>' + item.def.title + '</b> for server <b>' + self.formatHostname(item.hostname) + '</b>: ' + item.alert.message;
 					color = 'red';
+					actions.push( '<a href="#Snapshot?id=' + item.hostname + '/' + Math.floor( item.alert.date / 60 ) + '">View Snapshot</a>' );
+					
 				break;
 				
 				case 'alert_cleared':
@@ -177,6 +180,18 @@ Class.add( Page.Admin, {
 					if (item.alert_snooze) desc = "Alerts have been snoozed until <b>" + get_nice_date_time(item.alert_snooze, false, false) + "</b>";
 					else if (item.alert_snooze === 0) desc = "Alerts have been reactivated.";
 					else desc = "State data was updated.";
+				break;
+				
+				// watch
+				case 'watch_set':
+					if (item.hostname) item.hostnames = [item.hostname];
+					var nice_host = app.formatHostname(item.hostnames[0]);
+					if (item.hostnames.length > 1) {
+						var remain = item.hostnames.length - 1;
+						nice_host += " and " + remain + " " + pluralize("other", remain);
+					}
+					if (item.date) desc = "Server watch set on " + nice_host + " until: <b>" + get_nice_date_time(item.date, false, false) + "</b>";
+					else desc = "Server watch canceled for: " + nice_host;
 				break;
 				
 				// errors

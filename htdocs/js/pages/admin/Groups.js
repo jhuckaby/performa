@@ -372,7 +372,7 @@ Class.add( Page.Admin, {
 		
 		// hostname_match
 		html += get_form_table_row( 'Hostname Match', '<input type="text" id="fe_eg_match" size="40" class="mono" value="'+escape_text_field_value((group.hostname_match == '(?!)') ? "" : group.hostname_match)+'" spellcheck="false"/>' );
-		html += get_form_table_caption( "Optionally enter a regular expression match to auto-include hostnames in the group.");
+		html += get_form_table_caption( "Optionally enter a regular expression match to auto-include hostnames in the group.<br/>To match <b>all servers</b>, set this to <code>.+</code>");
 		html += get_form_table_spacer();
 		
 		// alert notifications enabled

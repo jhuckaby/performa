@@ -1,52 +1,10 @@
-# Overview
-
-![](https://pixlcore.com/software/performa/screenshots/light-dark.png)
-
-**Performa** is a multi-server monitoring system with a web based front-end UI.  It can monitor CPU, memory, disk, network, and of course your own custom metrics.  Alerts can be configured to trigger on any expression, and send e-mails or fire web hooks.  Timeline data can be stored on local disk or in Amazon S3.
-
-## Features at a Glance
-
-- Easy to install, configure and run
-- Monitor any number of servers
-- New servers are added to the system automatically
-- Assign servers to groups manually or automatically
-- Supports ephemeral servers (serverless, autoscale, etc.)
-- Metrics are collected every minute
-- Multiple graph scales: hourly, daily, monthly, yearly
-- Real-time views with auto-refreshing graphs
-- View graphs for individual servers or entire groups
-- Add custom commands for gathering your own metrics
-- Alerts with custom trigger expressions
-- Alert e-mails and web hooks for notification
-- Alert snooze feature to silence notifications
-- One click snapshot-to-URL-to-clipboard for graphs
-- Graph data can be kept indefinitely or auto-expired
-- Light and dark themes for the UI
-
-## Screenshots
-
-<details><summary>See Screenshots</summary>
-
-![](https://pixlcore.com/software/performa/screenshots/overview.png)
-
-![](https://pixlcore.com/software/performa/screenshots/group-detail.png)
-
-![](https://pixlcore.com/software/performa/screenshots/group-detail-2.png)
-
-![](https://pixlcore.com/software/performa/screenshots/server-detail-light.png)
-
-![](https://pixlcore.com/software/performa/screenshots/monitor-list.png)
-
-![](https://pixlcore.com/software/performa/screenshots/activity-log.png)
-
-![](https://pixlcore.com/software/performa/screenshots/edit-command.png)
-
-</details>
-
-## Table of Contents
+<details><summary>Table of Contents</summary>
 
 <!-- toc -->
-* [Glossary](#glossary)
+- [Overview](#overview)
+	* [Features at a Glance](#features-at-a-glance)
+	* [Screenshots](#screenshots)
+	* [Glossary](#glossary)
 - [Installation](#installation)
 - [Setup](#setup)
 - [Configuration](#configuration)
@@ -86,6 +44,7 @@
 		+ [Built-in Alerts](#built-in-alerts)
 		+ [Alert Web Hooks](#alert-web-hooks)
 	* [Commands](#commands)
+	* [Snapshots](#snapshots)
 - [Command Line](#command-line)
 	* [Starting and Stopping](#starting-and-stopping)
 	* [Storage Maintenance](#storage-maintenance)
@@ -98,6 +57,56 @@
 	* [Manual Installation](#manual-installation)
 	* [Starting in Debug Mode](#starting-in-debug-mode)
 - [License](#license)
+
+</details>
+
+# Overview
+
+![](https://pixlcore.com/software/performa/screenshots/light-dark.png)
+
+**Performa** is a multi-server monitoring system with a web based front-end UI.  It can monitor CPU, memory, disk, network, and of course your own custom metrics.  Alerts can be configured to trigger on any expression, and send e-mails or fire web hooks.  Timeline data can be stored on local disk or in Amazon S3.
+
+## Features at a Glance
+
+- Easy to install, configure and run
+- Monitor any number of servers
+- New servers are added to the system automatically
+- Assign servers to groups manually or automatically
+- Supports ephemeral servers (serverless, autoscale, etc.)
+- Metrics are collected every minute
+- Multiple graph scales: hourly, daily, monthly, yearly
+- Real-time views with auto-refreshing graphs
+- View graphs for individual servers or entire groups
+- Add custom commands for graphing your own metrics
+- Alerts with custom trigger expressions
+- Alert e-mails and web hooks for notification
+- Alert snooze feature to silence notifications
+- Snapshot feature provides extra server details
+- One click snapshot-to-URL-to-clipboard for graphs
+- Graph data can be kept indefinitely or auto-expired
+- Light and dark themes for the UI
+
+## Screenshots
+
+<details><summary>See Screenshots</summary>
+
+![](https://pixlcore.com/software/performa/screenshots/overview.png)
+
+![](https://pixlcore.com/software/performa/screenshots/group-detail.png)
+
+![](https://pixlcore.com/software/performa/screenshots/group-detail-2.png)
+
+![](https://pixlcore.com/software/performa/screenshots/server-detail-light.png)
+
+![](https://pixlcore.com/software/performa/screenshots/snapshot-view.png)
+
+![](https://pixlcore.com/software/performa/screenshots/monitor-list.png)
+
+![](https://pixlcore.com/software/performa/screenshots/activity-log.png)
+
+![](https://pixlcore.com/software/performa/screenshots/edit-command.png)
+
+</details>
 
 ## Glossary
 
@@ -112,6 +121,7 @@ A quick introduction to some common terms used in Performa:
 | **API Key** | A special key that can be used by external apps to send API requests into Performa. |
 | **User** | A human user account, which has a username and a password.  Passwords are salted and hashed with [bcrypt](https://en.wikipedia.org/wiki/Bcrypt). |
 | **Satellite** | Our headless companion product, which silently collects metrics on your servers and sends them to the master server.  See [Performa Satellite](#performa-satellite) below. |
+| **Snapshot** | A snapshot is a detailed record of everything happening on a server, including all processes and network sockets.  Snapshots are taken when alerts trigger, and when being watched.  See [Snapshots](#snapshots) below. |
 
 # Installation
 
@@ -477,7 +487,7 @@ You can include any property from the main `conf/config.json` file by using the 
 
 # Performa Satellite
 
-Performa Satellite is our headless companion product, which silently collects metrics on your servers and sends them to the Performa master server.  It has no dependencies and ships as a precompiled binary (for Linux and macOS), so it will be compatible with a wide range of systems.  It does not run as a daemon, but instead launches via [cron](https://en.wikipedia.org/wiki/Cron) every minute, then exits.  It uses about 25 MB of RAM while it is active.
+Performa Satellite is our headless companion product, which silently collects metrics on your servers and sends them to the Performa master server.  It has no dependencies and ships as a precompiled binary (for Linux and macOS), so it will be compatible with a wide range of systems.  It does not run as a daemon, but instead launches via [cron](https://en.wikipedia.org/wiki/Cron) every minute, then exits.  It uses about 25 MB of RAM while it is active (usually only a few seconds per minute).
 
 For more information about Performa Satellite, including installation and configuration instructions, please see the [Performa Satellite Github Repo](https://github.com/jhuckaby/performa-satellite).
 
@@ -714,13 +724,26 @@ Each command has the following properties:
 | **Title** | A display title (label) for the alert, shown in the UI. |
 | **Enabled** | A checkbox denoting whether the command is enabled (will be executed) or disabled (skipped). |
 | **Groups** | A list of which server groups the command should be executed on (or you can select "all" groups). |
-| **Executable** | The executable command to run (e.g. `/bin/sh` or `/usr/bin/python`). |
+| **Executable** | The executable command to run (e.g. `/bin/sh`, `/usr/bin/python` or other). |
 | **Script** | The script source code to pipe to the command (i.e. shell commands or other). |
 | **Format** | If your command outputs JSON or XML, you can have this parsed for easier integration with monitors / alerts. |
-| **User ID** | Optionally run your command as a different user (i.e. for security). |
+| **User ID** | Optionally run your command as a different user on the server (i.e. for security purposes). |
 | **Notes** | A notes text field is provided for your own internal use. |
 
 If your command outputs raw text, you can use a regular expression to match the specific metric value (this is configured per each monitor that refers to the command).  Or, if your command happens to output JSON or XML, then Performa can parse it, and provide more structured access in the [Data Source](#data-sources) system.
+
+## Snapshots
+
+A snapshot is a detailed report of everything happening on a server, including all the information we collect every minute (i.e. CPU, memory stats), but also:
+
+- A detailed list of all processes running on the server, including PIDs, commands, CPU and memory usage.
+- A detailed list of all network connections, their source and destination IP addresses and ports, and each connection state.
+- A list of all socket listeners, including which protocol, interface and port number.
+- A list of all filesystem mounts and their usage and free space.
+
+Performa automatically takes a snapshot of a server whenever any alert is triggered.  This allows you to come back later to see exactly what was happening at the time of the alert (i.e. which processes and connections were open).  You can access snapshots from the alert e-mail notification, as well as the "Snapshots" tab in the UI.
+
+In addition to automatic snapshots, you can "watch" any server or group for any amount of time.  Setting a "watch" on a server or group means that it will generate a snapshot every minute for the duration of the watch timer.  You can set watches by clicking the "Watch Server..." or "Watch Group..." buttons in the UI.
 
 # Command Line
 

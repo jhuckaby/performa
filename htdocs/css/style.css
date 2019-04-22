@@ -19,6 +19,10 @@ div.container {
 	/* color: var(--header-text-color); */
 }
 
+#d_footer {
+	margin: 12px 0px 17px 0px;
+}
+
 /* Menus */
 
 .tab_widget {
@@ -244,6 +248,10 @@ fieldset.dt_fs > legend {
 
 /* Table Pagination Spacing Fix */
 
+fieldset div.pagination {
+	margin-top: 0;
+}
+
 div.pagination > table tr td {
 	white-space: nowrap;
 }
@@ -346,6 +354,10 @@ fieldset.inline_error {
 
 #d_controls select {
 	font-size: 12px;
+}
+
+#fe_ctrl_server, #fe_ctrl_group {
+	max-width: 200px;
 }
 
 .chart_size_icon {
@@ -558,6 +570,7 @@ body.dark .apexcharts-xaxistooltip {
 	top: 0;
 	left: 0;
 	z-index: 2;
+	cursor: default;
 }
 
 .server_pie_container, .server_pie_graph, .server_pie_overlay {
@@ -589,6 +602,17 @@ body.dark .apexcharts-xaxistooltip {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.server_pie_widget {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	width: 180px;
+	height: 20px;
+	line-height: 20px;
+	text-align: right;
 }
 
 /* Group Tab */
@@ -623,4 +647,38 @@ fieldset.overview_group > legend {
 	top: -1px; 
 	font-size: 12px; 
 	color: var(--header-text-color);
+}
+
+/* Snapshot Tab */
+
+.inline_table_scrollarea {
+	position: relative;
+	max-height: 75vh;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+table.fieldset_table tr th.st_col_header {
+	white-space: nowrap;
+	font-weight: bold;
+	cursor: pointer;
+}
+table.fieldset_table tr th.st_col_header:hover {
+	color: var(--highlight-color);
+	text-decoration: underline;
+}
+table.fieldset_table tr th.st_col_header.active {
+	color: var(--highlight-color);
+}
+
+.percent_bar_container {
+	position: relative;
+	background-color: var(--border-color);
+	height: 15px;
+}
+
+.percent_bar_inner {
+	box-sizing: border-box;
+	border-right: 1px solid var(--header-text-color);
+	height: 15px;
 }

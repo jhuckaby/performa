@@ -75,7 +75,7 @@
 		[ "listPush", "global/monitors", {
 			"id": "tcp_conns",
 			"title": "Open TCP Connections",
-			"source": "[stats/network/conns]",
+			"source": "[stats/network/states/established]",
 			"data_type": "integer",
 			"suffix": "",
 			"merge_type": "avg",
@@ -151,7 +151,7 @@
 		[ "listPush", "global/monitors", {
 			"id": "io_wait",
 			"title": "CPU I/O Wait %",
-			"source": "[cpu/percentages/iowait]",
+			"source": "[cpu/totals/iowait]",
 			"data_type": "float",
 			"suffix": "%",
 			"merge_type": "",

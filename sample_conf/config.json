@@ -15,6 +15,7 @@
 	"debug_level": 5,
 	"maintenance": "04:00",
 	"expiration": "10 years",
+	"list_row_max": 10000,
 	"monitor_self": true,
 	
 	"hostname_display_strip": "\\.[\\w\\-]+\\.\\w+$",
@@ -45,8 +46,7 @@
 		
 		"Filesystem": {
 			"base_dir": "data",
-			"key_namespaces": 1,
-			"raw_file_paths": 1
+			"key_namespaces": 1
 		}
 	},
 	

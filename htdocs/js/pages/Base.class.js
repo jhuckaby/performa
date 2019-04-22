@@ -1648,6 +1648,64 @@ Class.subclass( Page, "Page.Base", {
 		// populate it into the staging text area
 		var path = $(elem).data('path').replace(/\/+/g, '/').replace(/^\//, '');
 		$('#fe_explore_sel').val( '[' + path + ']' ).focus();
+	},
+	
+	getPercentBarHTML: function(amount, width) {
+		// render simple percentage bar with green / yellow / red colors
+		var html = '';
+		html += '<div class="percent_bar_container" style="width:' + width + 'px" title="' + pct(amount) + '">';
+		
+		var color = '';
+		if (amount >= 0.75) color = 'rgba(255, 0, 0, 0.75)';
+		else if (amount >= 0.5) color = 'rgba(224, 224, 0, 0.85)';
+		else color = '#080';
+		
+		var color_width = Math.floor( amount * width );
+		html += '<div class="percent_bar_inner" style="background-color:' + color + '; width:' + color_width + 'px"></div>';
+		html += '</div>';
+		return html;
+	},
+	
+	getCPUTableHTML: function(cpus) {
+		// render HTML for CPU detail table
+		var self = this;
+		var html = '';
+		html += '<legend>CPU Details</legend>';
+		html += '<table class="fieldset_table" width="100%">';
+		html += '<tr>';
+			html += '<th>CPU #</th>';
+			html += '<th>System %</th>';
+			html += '<th>User %</th>';
+			html += '<th>Nice %</th>';
+			html += '<th>I/O Wait %</th>';
+			html += '<th>Hard IRQ %</th>';
+			html += '<th>Soft IRQ %</th>';
+			html += '<th>Total %</th>';
+		html += '</tr>';
+		
+		var cpu_list = [];
+		for (var idx = 0, len = num_keys(cpus); idx < len; idx++) {
+			var key = 'cpu' + idx;
+			if (cpus[key]) cpu_list.push( cpus[key] );
+		}
+		
+		cpu_list.forEach( function(cpu, idx) {
+			html += '<tr>';
+			html += '<td><b>#' + Math.floor( idx + 1 ) + '</b></td>';
+			html += '<td>' + pct( cpu.system || 0, 100 ) + '</td>';
+			html += '<td>' + pct( cpu.user || 0, 100 ) + '</td>';
+			html += '<td>' + pct( cpu.nice || 0, 100 ) + '</td>';
+			html += '<td>' + pct( cpu.iowait || 0, 100 ) + '</td>';
+			html += '<td>' + pct( cpu.irq || 0, 100 ) + '</td>';
+			html += '<td>' + pct( cpu.softirq || 0, 100 ) + '</td>';
+			
+			var total = 100 - (cpu.idle || 0);
+			html += '<td>' + self.getPercentBarHTML( total / 100, 200 ) + '</td>';
+			html += '</tr>';
+		});
+		
+		html += '</table>';
+		return html;
 	}
 	
 } );

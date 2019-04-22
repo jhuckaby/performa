@@ -413,6 +413,7 @@ Class.subclass( Page.Base, "Page.Home", {
 			html += '<th>Detail</th>';
 			html += '<th>Trigger</th>';
 			html += '<th>Date/Time</th>';
+			html += '<th>Actions</th>';
 		html += '</tr>';
 		
 		all_alerts.forEach( function(alert) {
@@ -430,6 +431,10 @@ Class.subclass( Page.Base, "Page.Home", {
 			html += '<td>' + alert.message + '</td>';
 			html += '<td style="font-family:monospace">' + alert_def.expression + '</pre></td>';
 			html += '<td>' + get_nice_date_time( alert.date ) + '</td>';
+			
+			var snap_id = alert.hostname + '/' + Math.floor( alert.date / 60 );
+			html += '<td><a href="#Snapshot?id=' + snap_id + '">View&nbsp;Snapshot</a></td>';
+			
 			html += '</tr>';
 		});
 		
