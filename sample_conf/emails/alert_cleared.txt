@@ -15,7 +15,7 @@ Snapshot Detail View:
 [/snapshot_url]
 
 Live Server View:
-[/self_url]
+[/live_url]
 
 Regards,
 The Performa Team

@@ -233,19 +233,6 @@ Class.subclass( Page.Base, "Page.Snapshot", {
 		
 		// column 2
 		html += '<div class="snap_info_column">';
-			var nice_cores = 'n/a';
-			if (metadata.data.cpu && metadata.data.cpu.cores) {
-				if (metadata.data.cpu.physicalCores && (metadata.data.cpu.physicalCores != metadata.data.cpu.cores)) {
-					nice_cores = metadata.data.cpu.physicalCores + " physical, " + 
-						metadata.data.cpu.cores + " virtual";
-				}
-				else {
-					nice_cores = metadata.data.cpu.cores;
-				}
-			}
-			html += '<div class="info_label">CPU Cores</div>';
-			html += '<div class="info_value">' + nice_cores + '</div>';
-			
 			var nice_cpu_model = 'n/a';
 			if (metadata.data.cpu && metadata.data.cpu.manufacturer) {
 				nice_cpu_model = metadata.data.cpu.manufacturer;
@@ -261,6 +248,19 @@ Class.subclass( Page.Base, "Page.Snapshot", {
 			}
 			html += '<div class="info_label">CPU Clock</div>';
 			html += '<div class="info_value">' + nice_clock_speed + '</div>';
+			
+			var nice_cores = 'n/a';
+			if (metadata.data.cpu && metadata.data.cpu.cores) {
+				if (metadata.data.cpu.physicalCores && (metadata.data.cpu.physicalCores != metadata.data.cpu.cores)) {
+					nice_cores = metadata.data.cpu.physicalCores + " physical, " + 
+						metadata.data.cpu.cores + " virtual";
+				}
+				else {
+					nice_cores = metadata.data.cpu.cores;
+				}
+			}
+			html += '<div class="info_label">CPU Cores</div>';
+			html += '<div class="info_value">' + nice_cores + '</div>';
 			
 			var nice_load = metadata.data.load.map( function(num) { return short_float_str(num); } ).join(', ');
 			html += '<div class="info_label">CPU Load Averages</div>';
@@ -364,8 +364,8 @@ Class.subclass( Page.Base, "Page.Snapshot", {
 				item.parentPid,
 				item.user,
 				short_float(item.pcpu) + '%',
-				get_text_from_bytes( (item.mem_rss || 0) * 1024 ),
-				get_text_from_seconds( item.age || 0, false, true ),
+				'<div style="white-space:nowrap;">' + get_text_from_bytes( (item.mem_rss || 0) * 1024 ) + '</div>',
+				'<div style="white-space:nowrap;">' + get_text_from_seconds( item.age || 0, false, true ) + '</div>',
 				'<span style="font-family:monospace; white-space:normal; word-break:break-word;">' + item.command + '</span>'
 			];
 		});

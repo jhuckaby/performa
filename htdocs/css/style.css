@@ -651,6 +651,17 @@ fieldset.overview_group > legend {
 
 /* Snapshot Tab */
 
+.snap_info_column {
+	max-width: 180px;
+}
+
+.snap_info_column > .info_value {
+	height: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .inline_table_scrollarea {
 	position: relative;
 	max-height: 75vh;

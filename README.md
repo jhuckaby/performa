@@ -659,7 +659,8 @@ When an alert fires (and when it clears), you can configure a "web hook" to be s
 	"action": "alert_new",
 	"hostname": "dev001.local",
 	"group": "main",
-	"url": "http://localhost:5511/#Server?hostname=dev001.local",
+	"live_url": "http://localhost:5511/#Server?hostname=dev001.local",
+	"snapshot_url": "http://localhost:5511/#Snapshot?id=dev001.local/832434",
 	"alert": {
 		"date": 1555377004,
 		"exp": "11.34 >= 9",
@@ -691,7 +692,8 @@ Here are descriptions of all the properties in the JSON web hook data:
 | `action` | This denotes the event, will be `alert_new` when an alert triggers, and `alert_cleared` when an alert clears. |
 | `hostname` | The server hostname where the alert event took place. |
 | `group` | The Group ID which the server is assigned to (see [Groups](#groups)). |
-| `url` | A fully-qualified URL to the server detail page, showing the latest real-time metrics. |
+| `live_url` | A fully-qualified URL to the live server view page, showing the latest real-time metrics. |
+| `snapshot_url` | A fully-qualified URL to the snapshot page, showing detailed server information recorded at the time of the alert. |
 | `alert` | An object containing internal metadata about the alert event. |
 | `alert/date` | The exact date/time when the alert triggered, expressed in Epoch seconds. |
 | `alert/exp` | The alert expression, with all macros substituted with actual values. |
