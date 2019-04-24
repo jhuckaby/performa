@@ -52,6 +52,7 @@
 	* [Server Startup](#server-startup)
 	* [Upgrading](#upgrading)
 	* [Data Import and Export](#data-import-and-export)
+	* [Uninstall](#uninstall)
 	* [Logs](#logs)
 - [Development](#development)
 	* [Manual Installation](#manual-installation)
@@ -884,6 +885,22 @@ mkdir -p $BACKUP_DIR
 /opt/performa/bin/control.sh export $BACKUP_FILE --verbose
 find $BACKUP_DIR -mtime +365 -type f -exec rm -v {} \;
 ```
+
+## Uninstall
+
+If you want to completely remove Performa from your server, all you have to do is stop the service (if it is running), remove the service from systemd boot (if you added it), and delete the base directory.  Here are the commands:
+
+```
+cd /opt/performa
+bin/control.sh stop
+npm run unboot
+cd ..
+rm -rf performa
+```
+
+Note that if you configured your storage to live elsewhere on disk, or in Couchbase / S3, it must be deleted separately.
+
+If you installed Performa Satellite on additional servers, see [these instructions](https://github.com/jhuckaby/performa-satellite#command-line-arguments) for removing it.
 
 ## Logs
 
