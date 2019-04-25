@@ -152,9 +152,10 @@ app.extend({
 	getRecentServerMenuOptionsHTML: function() {
 		// get nice server list with sorted groups (and sorted servers in groups)
 		var self = this;
+		var menu_groups = {};
+		var other_hostnames = [];
 		
 		// jump to server menu
-		var menu_groups = {};
 		for (var hostname in this.recent_hostnames) {
 			var value = this.recent_hostnames[hostname];
 			if (value === 1) {
@@ -164,6 +165,7 @@ app.extend({
 					if (!menu_groups[group_def.id]) menu_groups[group_def.id] = [];
 					menu_groups[group_def.id].push( hostname );
 				}
+				else other_hostnames.push(hostname);
 			}
 			else {
 				// auto-scale host, has group embedded as value
@@ -191,6 +193,19 @@ app.extend({
 				menu_html += '</optgroup>';
 			}
 		});
+		
+		if (other_hostnames.length) {
+			if (num_menu_groups > 1) {
+				menu_html += '<option value="" disabled></option>';
+				menu_html += '<optgroup label="(Unassigned)">';
+			}
+			menu_html += other_hostnames.map( function(hostname) {
+				return '<option value="' + hostname + '">' + self.formatHostname(hostname) + '</option>';
+			} ).join('');
+			if (num_menu_groups > 1) {
+				menu_html += '</optgroup>';
+			}
+		}
 		
 		return menu_html;
 	},
