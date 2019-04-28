@@ -545,7 +545,7 @@ You can include any property from the main `conf/config.json` file by using the 
 
 Performa Satellite is our headless companion product, which silently collects metrics on your servers and sends them to the Performa master server.  It has no dependencies and ships as a precompiled binary (for Linux and macOS), so it will be compatible with a wide range of systems.  It does not run as a daemon, but instead launches via [cron](https://en.wikipedia.org/wiki/Cron) every minute, then exits.  It uses about 25 MB of RAM while it is active (usually only a few seconds per minute).
 
-For more information about Performa Satellite, including installation and configuration instructions, please see the [Performa Satellite Github Repo](https://github.com/jhuckaby/performa-satellite).
+For more information about Performa Satellite, including installation and configuration instructions, please see the [Performa Satellite GitHub Repo](https://github.com/jhuckaby/performa-satellite).
 
 # Components
 
