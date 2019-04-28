@@ -21,9 +21,16 @@
 		+ [log_columns](#log_columns)
 		+ [log_archive_path](#log_archive_path)
 		+ [log_archive_storage](#log_archive_storage)
-		+ [pid_file](#pid_file)
 		+ [debug_level](#debug_level)
+	* [Advanced Configuration](#advanced-configuration)
 		+ [maintenance](#maintenance)
+		+ [expiration](#expiration)
+		+ [list_row_max](#list_row_max)
+		+ [pid_file](#pid_file)
+		+ [monitor_self](#monitor_self)
+		+ [hostname_display_strip](#hostname_display_strip)
+		+ [alert_web_hook](#alert_web_hook)
+		+ [system_web_hooks](#system_web_hooks)
 	* [Storage Configuration](#storage-configuration)
 		+ [Filesystem](#filesystem)
 		+ [Couchbase](#couchbase)
@@ -294,21 +301,64 @@ The `enabled` property controls whether the system is active or not.  The `key_t
 
 Note that if [log_archive_path](#log_archive_path) is also set, it takes precedence over this.
 
-### pid_file
-
-The PID file is simply a text file containing the Process ID of the main Performa daemon.  It is used by the `control.sh` script to stop the daemon, and detect if it is running.  You should never have to deal with this file directly, and it defaults to living in the `logs` directory which is auto-created.  
-
-This can be a partial path, relative to the Performa base directory (`/opt/performa`) or a full path to a custom location.  However, it should probably not be changed, as the `control.sh` script expects it to live in `logs/performa.pid`.
-
 ### debug_level
 
 The level of verbosity in the debug logs.  It ranges from `1` (very quiet) to `10` (extremely loud).  The default value is `5`.
+
+## Advanced Configuration
 
 ### maintenance
 
 Performa needs to run storage maintenance once per day, which generally involves deleting expired records and trimming lists which have grown too large.  The application is still usable during this time, but UI performance may be slightly impacted.
 
 By default the maintenance is set to run at 4:00 AM (local server time).  Feel free to change this to a more convenient time for your server environment.  The format of the parameter is `HH:MM`.
+
+### expiration
+
+The `expiration` property sets the data expiration period for all server and group timeline data.  It accepts any human-readable relative date string, e.g. `6 months` or `10 years`.  Set this to `false` to disable expiration, meaning data will never be expired.
+
+### list_row_max
+
+This parameter controls how many items are kept in historical lists such as the Activity Log and Snapshots.  When this limit is exceeded, the oldest entries are removed during the nightly maintenance run.  The default limit is `10000` items.  Set this to `false` to disable expiration.
+
+This has no real effect on performance -- only space on disk (or Couchbase / S3).
+
+### pid_file
+
+The PID file is simply a text file containing the Process ID of the main Performa daemon.  It is used by the `control.sh` script to stop the daemon, and detect if it is running.  You should never have to deal with this file directly, and it defaults to living in the `logs` directory which is auto-created.  
+
+This can be a partial path, relative to the Performa base directory (`/opt/performa`) or a full path to a custom location.  However, it should probably not be changed, as the `control.sh` script expects it to live in `logs/performa.pid`.
+
+### monitor_self
+
+The `monitor_self` property, when set to `true`, means that the Performa server will monitor itself by launching [Performa Satellite](#performa-satellite) internally (i.e. there is no need to explicitly install it).
+
+### hostname_display_strip
+
+The `hostname_display_strip` is a regular expression that is used to format server hostnames for display.  Specifically, whatever matches in the regular expression is stripped off, and the remainder is displayed as the hostname in the UI.  It defaults to stripping off the final top-level domain at the end of the hostname, if one is found.  The default pattern is:
+
+```
+\.[\w\-]+\.\w+$
+```
+
+### alert_web_hook
+
+The `alert_web_hook` property is an optional, universal web hook URL, which is requested for *every* alert, in addition to any group or alert-specific web hooks that may also be configured.  See [Alert Web Hooks](#alert-web-hooks) for more details about the web hook system.
+
+### system_web_hooks
+
+In addition to firing web hooks for alert triggers, there are also some other miscellaneous events that you may want to be notified about.  Those are defined in an optional `system_web_hooks` object, formatted like this:
+
+```js
+"system_web_hooks": {
+	"server_add": "http://myserver.com/webhook/server-add",
+	"warning": "http://myserver.com/webhook/warning"
+}
+```
+
+If the `server_add` property is set to a URL, it will be requested whenever a new server is added to the Performa cluster.  If the `warning` property is set to a URL, it will be requested whenever a warning condition is logged.  Alternatively, the properties can be set to boolean `true`, and the [alert_web_hook](#alert_web_hook) value will be used instead.
+
+The web hook request will be an HTTP POST with a JSON payload.  The JSON will contain details about the action, specifically a `text` property describing it.
 
 ## Storage Configuration
 
@@ -394,6 +444,11 @@ To use Amazon S3 as a backing store for Performa, please read the [Amazon S3 sec
 			"fileExtensions": true,
 			"params": {
 				"Bucket": "YOUR_S3_BUCKET_ID"
+			},
+			"cache": {
+				"enabled": true,
+				"maxItems": 1000,
+				"maxBytes": 10485760
 			}
 		}
 	}

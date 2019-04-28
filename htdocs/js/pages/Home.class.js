@@ -136,7 +136,7 @@ Class.subclass( Page.Base, "Page.Home", {
 			monitors.forEach( function(mon_def) {
 				if (!mon_def.merge_type) return;
 				var combo_id = group_def.id + '_' + mon_def.id;
-				html += '<div id="d_graph_ov_' + combo_id + '" class="graph_container" data-group="' + group_def.id + '" data-mon="' + mon_def.id + '">';
+				html += '<div id="d_graph_ov_' + combo_id + '" class="graph_container" data-group="' + group_def.id + '" data-mon="' + mon_def.id + '" style="min-height:200px;">'; // hack
 				html += '<div class="graph_button copy"><i class="mdi mdi-clipboard-pulse-outline mdi-lg" title="Copy Graph Image URL" onMouseUp="$P().copyGraphImage(this)"></i></div>';
 				html += '<div id="c_graph_ov_' + combo_id + '"></div>';
 				html += '</div>';
@@ -153,6 +153,7 @@ Class.subclass( Page.Base, "Page.Home", {
 		// create all graphs without data
 		this.graphs = {};
 		
+		/*
 		this.groups.forEach( function(group_def) {
 			var monitors = app.findMonitorsFromGroup( group_def );
 			if (!monitors.length) return;
@@ -173,6 +174,7 @@ Class.subclass( Page.Base, "Page.Home", {
 				});
 			}); // foreach monitor
 		}); // foreach group
+		*/
 		
 		// calculate min/max for data bounds
 		this.calcDataRange();
@@ -237,6 +239,21 @@ Class.subclass( Page.Base, "Page.Home", {
 		
 		// var group_def = find_object( config.groups, { id: group_id } );
 		var mon_def = find_object( config.monitors, { id: mon_id } );
+		
+		if (!graph) {
+			// first time graph scrolled into view, so create it
+			var mon_idx = find_object_idx( config.monitors, { id: mon_id } );
+			graph = this.graphs[combo_id] = self.createGraph({
+				id: combo_id,
+				title: ucfirst(mon_def.merge_type) + " " + mon_def.title,
+				data_type: mon_def.data_type,
+				merge_type: mon_def.merge_type,
+				suffix: mon_def.suffix || '',
+				num_layers: 1,
+				canvas_id: 'c_graph_ov_' + combo_id,
+				color: this.graphColors[ mon_idx % this.graphColors.length ]
+			});
+		}
 		
 		// process each row
 		this.rows.forEach( function(row) {

@@ -21,6 +21,11 @@
 	"hostname_display_strip": "\\.[\\w\\-]+\\.\\w+$",
 	"alert_web_hook": "",
 	
+	"system_web_hooks": {
+		"server_add": true,
+		"warning": true
+	},
+	
 	"client": {
 		"name": "Performa",
 		"debug": 1,
@@ -42,11 +47,16 @@
 		"transactions": true,
 		"trans_auto_recover": true,
 		"cache_key_match": "^(global/|users/|sessions/)",
-		"log_event_types": { "get": 1, "put": 1, "head": 1, "delete": 1, "expire_set": 1, "maint": 1 },
+		"log_event_types": { "get": 1, "put": 1, "head": 1, "delete": 1, "expire_set": 1, "perf_min": 1, "maint": 1 },
 		
 		"Filesystem": {
 			"base_dir": "data",
-			"key_namespaces": 1
+			"key_namespaces": true,
+			"cache": {
+				"enabled": true,
+				"maxItems": 1000,
+				"maxBytes": 10485760
+			}
 		}
 	},
 	

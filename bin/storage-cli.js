@@ -88,6 +88,9 @@ var isArray = Array.isArray || util.isArray;
 // prevent logging transactions to STDOUT
 config.Storage.log_event_types = {};
 
+// disable transactions
+config.Storage.transactions = false;
+
 // construct standalone storage server
 var storage = new StandaloneStorage(config.Storage, function(err) {
 	if (err) throw err;
