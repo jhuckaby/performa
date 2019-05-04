@@ -294,6 +294,7 @@ app.extend({
 			this.getTimeMenuItem( 3600 * 3 ),
 			this.getTimeMenuItem( 3600 * 6 ),
 			this.getTimeMenuItem( 3600 * 12 ),
+			this.getTimeMenuItem( 3600 * 18 ),
 			this.getTimeMenuItem( 86400 ),
 			this.getTimeMenuItem( 86400 * 2 ),
 			this.getTimeMenuItem( 86400 * 3 ),
@@ -338,11 +339,11 @@ app.extend({
 				app.api.post( 'app/update_state', new_state, function(resp) {
 					
 					if (alert_snooze) {
-						// app.showMessage('success', "Alerts will be snoozed for " + get_text_from_seconds(alert_snooze, false, true));
+						app.showMessage('success', "Alerts will be snoozed for " + get_text_from_seconds(alert_snooze, false, true) + ".");
 						$('#d_alert_ctrl').html( '<i class="mdi mdi-bell-off mdi-lg">&nbsp;</i>Snooze' );
 					}
 					else {
-						// app.showMessage('success', "Alerts have been reactivated.");
+						app.showMessage('success', "Alerts have been reactivated.");
 						$('#d_alert_ctrl').html( '<i class="mdi mdi-bell mdi-lg">&nbsp;</i>Active' );
 					}
 					
