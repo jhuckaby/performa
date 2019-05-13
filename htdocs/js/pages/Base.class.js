@@ -15,7 +15,7 @@ Class.subclass( Page, "Page.Base", {
 		},
 		half: {
 			height: 300,
-			line_thickness: 3,
+			line_thickness: 2,
 			xaxis_ticks: 6,
 			title_font_size: '15px'
 		},
@@ -552,6 +552,7 @@ Class.subclass( Page, "Page.Base", {
 			// auto-refresh checkbox
 			$('#d_ctrl_opts').show();
 			$('#fe_ctrl_auto_refresh').prop('checked', app.getPref('auto_refresh') == '1' );
+			$('#fe_ctrl_annotations').prop('checked', app.getPref('annotations') == '1' );
 		}
 		else {
 			$('#d_ctrl_range').hide();
@@ -648,6 +649,19 @@ Class.subclass( Page, "Page.Base", {
 		else {
 			app.setPref('auto_refresh', '0'); // always strings
 		}
+	},
+	
+	toggleAnnotations: function() {
+		// toggle annotations user preference, read from checkbox
+		if ($('#fe_ctrl_annotations').is(':checked')) {
+			app.setPref('annotations', '1'); // always strings
+		}
+		else {
+			app.setPref('annotations', '0'); // always strings
+		}
+		
+		// trigger a graph redraw
+		this.onThemeChange();
 	},
 	
 	displayDataRange: function(min_date, max_date) {
@@ -1021,14 +1035,16 @@ Class.subclass( Page, "Page.Base", {
 		// show indeterminate progress in icon
 		$elem.removeClass().addClass('mdi mdi-clipboard-arrow-up-outline mdi-lg');
 		
-		// find left side of data for timestamp
-		var min_x = (new Date()).getTime();
+		// find right side of data for timestamp
+		var max_x = 0;
 		graph.w.config.series.forEach( function(dataset) {
-			if (dataset.data && dataset.data[0] && dataset.data[0].x && (dataset.data[0].x < min_x)) min_x = dataset.data[0].x;
+			if (dataset.data && dataset.data.length && (dataset.data[dataset.data.length - 1].x > max_x)) {
+				max_x = dataset.data[dataset.data.length - 1].x;
+			}
 		} );
 		
-		// get date stamp of left side of chart
-		var dargs = get_date_args( new Date(min_x) );
+		// get date stamp of right side of chart
+		var dargs = get_date_args( new Date(max_x) );
 		
 		// generate title, path and filename
 		var unique_id = get_unique_id(16, app.username);
@@ -1056,14 +1072,14 @@ Class.subclass( Page, "Page.Base", {
 		switch (args.sys) {
 			case 'hourly':
 				path = dargs.yyyy_mm_dd;
-				title += ' - ' + get_nice_date(min_x / 1000);
+				title += ' - ' + get_nice_date(max_x / 1000);
 				path += '/' + dargs.hh;
 				title += ' - ' + dargs.hour12 + ' ' + dargs.ampm.toUpperCase();
 			break;
 			
 			case 'daily':
 				path = dargs.yyyy_mm_dd;
-				title += ' - ' + get_nice_date(min_x / 1000);
+				title += ' - ' + get_nice_date(max_x / 1000);
 			break;
 			
 			case 'monthly': 

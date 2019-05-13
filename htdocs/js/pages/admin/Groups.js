@@ -51,8 +51,8 @@ Class.add( Page.Admin, {
 		var self = this;
 		html += this.getBasicTable( this.groups, cols, 'group', function(item, idx) {
 			var actions = [];
-			if (idx > 0) actions.push('<span class="link" onMouseUp="$P().move_up('+idx+')" title="Move Up"><i class="fa fa-arrow-up"></i></span>');
-			if (idx < self.groups.length - 1) actions.push('<span class="link" onMouseUp="$P().move_down('+idx+')" title="Move Down"><i class="fa fa-arrow-down"></i></span>');
+			if (idx > 0) actions.push('<span class="link" onMouseUp="$P().group_move_up('+idx+')" title="Move Up"><i class="fa fa-arrow-up"></i></span>');
+			if (idx < self.groups.length - 1) actions.push('<span class="link" onMouseUp="$P().group_move_down('+idx+')" title="Move Down"><i class="fa fa-arrow-down"></i></span>');
 			actions.push( '<span class="link" onMouseUp="$P().edit_group('+idx+')"><b>Edit</b></span>' );
 			actions.push( '<span class="link" onMouseUp="$P().delete_group('+idx+')"><b>Delete</b></span>' );
 			
@@ -81,7 +81,7 @@ Class.add( Page.Admin, {
 		this.div.html( html );
 	},
 	
-	move_up: function(idx) {
+	group_move_up: function(idx) {
 		// move selected item up (sort order change)
 		var self = this;
 		if (this.swap_in_progress) return;
@@ -103,7 +103,7 @@ Class.add( Page.Admin, {
 		} );
 	},
 
-	move_down: function(idx) {
+	group_move_down: function(idx) {
 		// move selected item down (sort order change)
 		var self = this;
 		if (this.swap_in_progress) return;

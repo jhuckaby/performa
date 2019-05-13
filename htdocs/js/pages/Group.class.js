@@ -324,6 +324,7 @@ Class.subclass( Page.Base, "Page.Group", {
 		var graph = this.graphs[mon_id];
 		var series = [];
 		var alert_times = [];
+		var min_date = time_now();
 		
 		// see if graph is still visible (queue delay -- user could have scrolled past)
 		if (!this.div.find('#d_graph_group_' + mon_id).visible(true, true)) {
@@ -345,6 +346,8 @@ Class.subclass( Page.Base, "Page.Group", {
 				if ((mon_id in row.totals) && self.isRowInRange(row)) {
 					graph_rows.push({ x: row.date * 1000, y: row.totals[mon_id] });
 					
+					if (row.date < min_date) min_date = row.date;
+					
 					if (row.alerts) {
 						var yes_alert = false;
 						
@@ -361,7 +364,7 @@ Class.subclass( Page.Base, "Page.Group", {
 				name: self.formatHostname( host.hostname ),
 				data: self.crushData( graph_rows )
 			});
-		});
+		}); // foreach host
 		
 		// possibly merge all series into single dataset (min/avg/max/total)
 		if (app.getPref('ggt_' + mon_id)) {
@@ -370,21 +373,48 @@ Class.subclass( Page.Base, "Page.Group", {
 		
 		// setup annotations
 		var x_annos = [];
-		alert_times.forEach( function(x) {
-			x_annos.push({
-				x: x,
-				borderColor: '#888',
-				yAxisIndex: 0,
-				label: {
-					show: true,
-					text: 'Alert',
-					style: {
-						color: "#fff",
-						background: '#f00'
+		if (app.getPref('annotations') == '1') {
+			alert_times.forEach( function(x) {
+				x_annos.push({
+					x: x,
+					borderColor: '#888',
+					yAxisIndex: 0,
+					label: {
+						show: true,
+						text: 'Alert',
+						style: {
+							color: "#fff",
+							background: '#f00'
+						}
 					}
-				}
+				});
 			});
-		});
+			
+			if (this.isRealTime()) {
+				// allow a few minutes of slack here, just in case a server had a hiccup
+				var min_x = (min_date + 180) * 1000;
+				
+				series.forEach( function(item, idx) {
+					var rows = item.data;
+					if (rows.length && (rows[0].x > min_x)) {
+						x_annos.push({
+							x: rows[0].x,
+							borderColor: '#888',
+							yAxisIndex: 0,
+							label: {
+								show: true,
+								text: 'New',
+								style: {
+									color: "#fff",
+									// background: '#080'
+									background: self.graphColors[ idx % self.graphColors.length ]
+								}
+							}
+						}); // x_annos.push
+					} // new host
+				} ); // foreach series
+			} // real-time
+		} // annotations enabled
 		
 		// redraw graph series and annos
 		var options = this.getGraphConfig(mon_id);
@@ -747,18 +777,20 @@ Class.subclass( Page.Base, "Page.Group", {
 			if (extra_server_info.source) {
 				nice_kernel = substitute(extra_server_info.source, metadata.data, false);
 			}
-			// var num_alerts = num_keys(metadata.alerts || {});
-			var num_alerts = 0;
-			html += '<tr ' + (num_alerts ? 'class="red"' : '') + '>';
+			var is_stale = false;
+			if (self.isRealTime() && host.rows && host.rows.length) {
+				var row = host.rows[ host.rows.length - 1 ];
+				if (row.date < time_now() - 600) is_stale = true;
+			}
+			
+			html += '<tr ' + (is_stale ? 'class="disabled"' : '') + '>';
 			html += '<td><b>' + self.getNiceHostname(host.hostname, host.idx) + '</b></td>';
 			html += '<td>' + (metadata.ip || 'n/a') + '</td>';
-			// html += '<td>' + short_float(metadata.data.load ? metadata.data.load[0] : 0) + '</td>';
 			html += '<td>' + (metadata.data.cpu ? metadata.data.cpu.cores : 0) + '</td>';
 			html += '<td>' + get_text_from_bytes(metadata.data.memory.total || 0) + '</td>';
 			html += '<td>' + nice_os + '</td>';
 			html += '<td>' + nice_kernel + '</td>';
 			html += '<td>' + get_text_from_seconds(metadata.data.uptime_sec || 0, false, true) + '</td>';
-			// html += '<td>' + num_alerts + '</td>';
 			html += '</tr>';
 		});
 		

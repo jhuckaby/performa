@@ -12,7 +12,8 @@ app.extend({
 	default_prefs: {
 		graph_size: 'half',
 		ov_graph_size: 'third',
-		auto_refresh: '1' // localStorage is ALWAYS STRINGS (ugh)
+		auto_refresh: '1', // localStorage is ALWAYS STRINGS (ugh)
+		annotations: '1'
 	},
 	debug_cats: { 
 		all: 1, 
@@ -143,6 +144,11 @@ app.extend({
 		
 		var old_group = $('#fe_ctrl_group').val();
 		$('#fe_ctrl_group').empty();
+		
+		this.config.groups.sort( function(a, b) {
+			return a.id.localeCompare( b.id );
+		} );
+		
 		this.config.groups.forEach( function(group_def) {
 			$('#fe_ctrl_group').append( '<option value="' + group_def.id + '">' + group_def.title + '</option>' );
 		});
@@ -225,6 +231,11 @@ app.extend({
 		$('#fe_jump_to_group').empty().append(
 			'<option value="" disabled>Jump to Group</option>'
 		);
+		
+		this.config.groups.sort( function(a, b) {
+			return a.id.localeCompare( b.id );
+		} );
+		
 		this.config.groups.forEach( function(group_def) {
 			$('#fe_jump_to_group').append( '<option value="' + group_def.id + '">' + group_def.title + '</option>' );
 		});

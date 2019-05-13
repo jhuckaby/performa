@@ -170,6 +170,14 @@ Class.subclass( Page.Base, "Page.Server", {
 		this.div.find('div.graph_container').addClass('dirty');
 		this.onScrollDebounce();
 		this.updateInfo();
+		
+		// show warning if server data is stale (only in real-time mode)
+		if (this.isRealTime() && this.rows && this.rows.length) {
+			var row = this.rows[ this.rows.length - 1 ];
+			if (row.date < time_now() - 600) {
+				app.showMessage( 'warning', "This server has not submitted any data in over 10 minutes.  It may have gone offline." );
+			}
+		}
 	},
 	
 	calcDataRange: function() {
@@ -260,21 +268,23 @@ Class.subclass( Page.Base, "Page.Server", {
 		
 		// setup annotations
 		var x_annos = [];
-		alert_times.forEach( function(x) {
-			x_annos.push({
-				x: x,
-				borderColor: '#888',
-				yAxisIndex: 0,
-				label: {
-					show: true,
-					text: 'Alert',
-					style: {
-						color: "#fff",
-						background: '#f00'
+		if (app.getPref('annotations') == '1') {
+			alert_times.forEach( function(x) {
+				x_annos.push({
+					x: x,
+					borderColor: '#888',
+					yAxisIndex: 0,
+					label: {
+						show: true,
+						text: 'Alert',
+						style: {
+							color: "#fff",
+							background: '#f00'
+						}
 					}
-				}
+				});
 			});
-		});
+		} // annotations enabled
 		
 		// redraw graph series and annos
 		var options = this.getGraphConfig(mon_id);
