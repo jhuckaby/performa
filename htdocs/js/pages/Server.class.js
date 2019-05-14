@@ -14,34 +14,44 @@ Class.subclass( Page.Base, "Page.Server", {
 		
 		if (!args) args = {};
 		this.args = args;
+		var renav = false;
 		
 		// default to hourly (which is also used for real-time)
-		if (!args.sys) args.sys = 'hourly';
+		if (!args.sys) {
+			args.sys = 'hourly';
+			renav = true;
+		}
 		
 		// if no server specified in args, default to first server in recent contrib list
-		if (!args.hostname && this.lastHostname) {
-			args.hostname = this.lastHostname;
+		if (!args.hostname && app.getPref('last_hostname')) {
+			args.hostname = app.getPref('last_hostname');
+			renav = true;
 		}
 		if (!args.hostname) {
 			args.hostname = hash_keys_to_array(app.recent_hostnames).sort().shift();
+			renav = true;
 		}
 		if (!args.hostname) {
 			this.doInlineError('No Servers Found', 'No servers have submitted any monitoring data yet.');
 			return true;
 		}
-		this.lastHostname = args.hostname;
+		app.setPref('last_hostname', args.hostname);
 		
 		if (!args.date && !args.length) {
 			// default to realtime hourly
 			args.offset = -60;
 			args.length = 60;
+			renav = true;
 		}
 		// date always needs to be treated as a string
 		if (args.date) args.date = '' + args.date;
 		
+		if (renav) this.navReplaceArgs();
+		
 		app.setWindowTitle('Server Detail: ' + args.hostname);
 		app.showTabBar(true);
 		this.showControls(true);
+		this.tab[0]._page_id = Nav.currentAnchor();
 		
 		// Realtime views:
 		// #Server?hostname=foo.com&sys=hourly&offset=-60&length=60

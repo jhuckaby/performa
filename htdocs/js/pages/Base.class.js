@@ -566,6 +566,13 @@ Class.subclass( Page, "Page.Base", {
 		Nav.go( '#' + this.ID + compose_query_string(this.args) );
 	},
 	
+	navReplaceArgs: function() {
+		// recompose args into #URI and replace the current history state with it
+		// (this does NOT fire a hashchange)
+		delete this.args.cachebust;
+		history.replaceState( {}, "", '#' + this.ID + compose_query_string(this.args) );
+	},
+	
 	setControlMode: function(mode) {
 		// set new control (zoom) mode
 		if (!mode) mode = $('#fe_ctrl_mode').val();

@@ -14,26 +14,35 @@ Class.subclass( Page.Base, "Page.Group", {
 		
 		if (!args) args = {};
 		this.args = args;
+		var renav = false;
 		
 		// default to hourly (which is also real-time)
-		if (!args.sys) args.sys = 'hourly';
+		if (!args.sys) {
+			args.sys = 'hourly';
+			renav = true;
+		}
 		
 		// if no group specified in args, default to first group in list
-		if (!args.group && this.lastGroupID) {
-			args.group = this.lastGroupID;
+		if (!args.group && app.getPref('last_group_id')) {
+			args.group = app.getPref('last_group_id');
+			renav = true;
 		}
 		if (!args.group) {
 			args.group = config.groups[0].id;
+			renav = true;
 		}
-		this.lastGroupID = args.group;
+		app.setPref('last_group_id', args.group);
 		
 		if (!args.date && !args.length) {
 			// default to realtime hourly
 			args.offset = -60;
 			args.length = 60;
+			renav = true;
 		}
 		// date always needs to be treated as a string
 		if (args.date) args.date = '' + args.date;
+		
+		if (renav) this.navReplaceArgs();
 		
 		// store group and monitors in page
 		this.group = find_object( config.groups, { id: args.group } );
@@ -49,6 +58,7 @@ Class.subclass( Page.Base, "Page.Group", {
 		app.setWindowTitle('Group Detail: ' + this.group.title);
 		app.showTabBar(true);
 		this.showControls(true);
+		this.tab[0]._page_id = Nav.currentAnchor();
 		
 		// Realtime views:
 		// #Group?group=main&sys=hourly&offset=-60&length=60
