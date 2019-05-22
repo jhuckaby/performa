@@ -16,6 +16,7 @@
 	"maintenance": "04:00",
 	"expiration": "10 years",
 	"list_row_max": 10000,
+	"new_server_stale_threshold": 3600,
 	"monitor_self": true,
 	
 	"hostname_display_strip": "\\.[\\w\\-]+\\.\\w+$",

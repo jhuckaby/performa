@@ -1007,11 +1007,23 @@ Class.subclass( Page.Base, "Page.Group", {
 	
 	takeSnapshot: function() {
 		// take a snapshot (i.e. 1 minute watch)
+		var self = this;
 		var args = this.args;
 		var state = config.state;
 		var watch_time = 60;
 		var watch_date = time_now() + watch_time;
-		var hostnames = this.hosts.map( function(host) { return host.hostname; } );
+		// var hostnames = this.hosts.map( function(host) { return host.hostname; } );
+		
+		var hostnames = [];
+		this.hosts.forEach( function(host) {
+			var is_stale = false;
+			if (self.isRealTime() && host.rows && host.rows.length) {
+				var row = host.rows[ host.rows.length - 1 ];
+				if (row.date < time_now() - 600) is_stale = true;
+			}
+			if (!is_stale) hostnames.push( host.hostname );
+		});
+		if (!hostnames.length) return app.doError("Snapshots are not possible, as all servers in the group have gone stale (offline).");
 		
 		app.api.post( 'app/watch', { hostnames: hostnames, date: watch_date }, function(resp) {
 			// update local state and show message

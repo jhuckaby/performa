@@ -161,7 +161,7 @@ Class.subclass( Page.Base, "Page.Snapshot", {
 		
 		html += '<div class="subtitle" style="margin-top:10px; margin-bottom:15px;">';
 			html += '<i class="mdi mdi-history">&nbsp;</i>Server Snapshot: ' + app.formatHostname(metadata.hostname) + " &mdash; " + get_nice_date_time( metadata.date );
-			html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().jumpToHistorical()"><i class="mdi mdi-chart-line mdi-lg">&nbsp;</i><b>View Graphs...</b></span></div>';
+			html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().jumpToHistorical()"><i class="mdi mdi-chart-line mdi-lg">&nbsp;</i><b>View Historical Graphs...</b></span></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		

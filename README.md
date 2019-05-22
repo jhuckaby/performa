@@ -360,6 +360,10 @@ If the `server_add` property is set to a URL, it will be requested whenever a ne
 
 The web hook request will be an HTTP POST with a JSON payload.  The JSON will contain details about the action, specifically a `text` property describing it.
 
+### new_server_stale_threshold
+
+The `new_server_stale_threshold` property sets the maximum number of seconds to allow for an old server to come back online without considering it to be "new".  Meaning, if a server disappears for more than `new_server_stale_threshold` seconds (default 3600) then comes back online, it is considered to be "new" again, and a notification is sent out, and an entry is added to the activity log.  This only affects logging and notifications.
+
 ## Storage Configuration
 
 The `Storage` object contains settings for the Performa storage system.  This is built on the [pixl-server-storage](https://www.npmjs.com/package/pixl-server-storage) module, which can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).
