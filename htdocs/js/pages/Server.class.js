@@ -441,6 +441,8 @@ Class.subclass( Page.Base, "Page.Server", {
 		var options = {
 			chart: {
 				type: 'donut',
+				width: 180,
+				height: 180,
 				animations: {
 					enabled: false
 				}
@@ -452,8 +454,9 @@ Class.subclass( Page.Base, "Page.Server", {
 			colors: colors,
 			plotOptions: {
 				pie: {
-					customScale: 1.6,
-					offsetY: 15,
+					// customScale: 1.4,
+					offsetY: 33,
+					size: 84,
 					donut: {
 						size: '55%',
 						background: 'transparent',
