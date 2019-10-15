@@ -40,7 +40,7 @@ Class.add( Page.Admin, {
 			]
 		);
 		
-		var cols = ['<i class="fa fa-check-square-o"></i>', 'Monitor Title', 'Monitor ID', 'Groups', 'Author', 'Created', 'Actions'];
+		var cols = ['<i class="mdi mdi-menu"></i>', 'Monitor Title', 'Monitor ID', 'Groups', 'Author', 'Created', 'Actions'];
 		
 		html += '<div style="padding:20px 20px 30px 20px">';
 		
@@ -52,13 +52,14 @@ Class.add( Page.Admin, {
 		var self = this;
 		html += this.getBasicTable( this.monitors, cols, 'monitor', function(item, idx) {
 			var actions = [];
-			if (idx > 0) actions.push('<span class="link" onMouseUp="$P().move_up('+idx+')" title="Move Up"><i class="fa fa-arrow-up"></i></span>');
-			if (idx < self.monitors.length - 1) actions.push('<span class="link" onMouseUp="$P().move_down('+idx+')" title="Move Down"><i class="fa fa-arrow-down"></i></span>');
+			// if (idx > 0) actions.push('<span class="link" onMouseUp="$P().move_up('+idx+')" title="Move Up"><i class="fa fa-arrow-up"></i></span>');
+			// if (idx < self.monitors.length - 1) actions.push('<span class="link" onMouseUp="$P().move_down('+idx+')" title="Move Down"><i class="fa fa-arrow-down"></i></span>');
 			actions.push('<span class="link" onMouseUp="$P().edit_monitor('+idx+')"><b>Edit</b></span>');
 			actions.push('<span class="link" onMouseUp="$P().delete_monitor('+idx+')"><b>Delete</b></span>');
 			
 			var tds = [
-				'<input type="checkbox" style="cursor:pointer" onChange="$P().change_monitor_display('+idx+')" '+(item.display ? 'checked="checked"' : '')+'/>', 
+				'<div class="td_drag_handle" draggable="true" title="Drag to reorder"><i class="mdi mdi-menu"></i></div>',
+				// '<input type="checkbox" style="cursor:pointer" onChange="$P().change_monitor_display('+idx+')" '+(item.display ? 'checked="checked"' : '')+'/>', 
 				'<div class="td_big">' + self.getNiceMonitor(item, true, col_width) + '</div>',
 				'<code>' + item.id + '</code>',
 				self.getNiceGroupList(item.group_match, true, col_width),
@@ -86,6 +87,15 @@ Class.add( Page.Admin, {
 		html += '</div>'; // sidebar tabs
 		
 		this.div.html( html );
+		
+		this.setupDraggableTable({
+			table_sel: this.div.find('table.data_table'), 
+			handle_sel: 'td div.td_drag_handle', 
+			drag_ghost_sel: 'td div.td_big', 
+			drag_ghost_x: 5, 
+			drag_ghost_y: 10, 
+			callback: this.group_move.bind(this)
+		});
 	},
 	
 	change_monitor_display: function(idx) {
@@ -104,47 +114,23 @@ Class.add( Page.Admin, {
 		} );
 	},
 	
-	move_up: function(idx) {
-		// move selected item up (sort order change)
-		var self = this;
-		if (this.swap_in_progress) return;
-		this.swap_in_progress = true;
+	monitor_move: function($rows) {
+		// a drag operation has been completed
+		var items = [];
 		
-		var temp = this.monitors[idx - 1].sort_order;
-		this.monitors[idx - 1].sort_order = this.monitors[idx].sort_order;
-		this.monitors[idx].sort_order = temp;
-		this.receive_monitors({ rows: this.monitors });
+		$rows.each( function(idx) {
+			var $row = $(this);
+			items.push({
+				id: $row.data('id'),
+				sort_order: idx
+			});
+		});
 		
-		var swap = {
-			a: this.monitors[idx].id, 
-			b: this.monitors[idx - 1].id, 
-			key: 'sort_order' 
+		var data = {
+			items: items
 		};
-		app.api.post( 'app/swap_monitor_props', swap, function(resp) {
-			// done, release UI
-			self.swap_in_progress = false;
-		} );
-	},
-	
-	move_down: function(idx) {
-		// move selected item down (sort order change)
-		var self = this;
-		if (this.swap_in_progress) return;
-		this.swap_in_progress = true;
-		
-		var temp = this.monitors[idx + 1].sort_order;
-		this.monitors[idx + 1].sort_order = this.monitors[idx].sort_order;
-		this.monitors[idx].sort_order = temp;
-		this.receive_monitors({ rows: this.monitors });
-		
-		var swap = {
-			a: this.monitors[idx].id, 
-			b: this.monitors[idx + 1].id,
-			key: 'sort_order'
-		};
-		app.api.post( 'app/swap_monitor_props', swap, function(resp) {
-			// done, release UI
-			self.swap_in_progress = false;
+		app.api.post( 'app/multi_update_monitor', data, function(resp) {
+			// done
 		} );
 	},
 	

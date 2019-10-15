@@ -1729,6 +1729,208 @@ Class.subclass( Page, "Page.Base", {
 		
 		html += '</table>';
 		return html;
+	},
+	
+	getBasicTable: function() {
+		// get html for sorted table (fake pagination, for looks only)
+		// overriding function in page.js for adding ids per row
+		var html = '';
+		var args = null;
+		
+		if (arguments.length == 1) {
+			// custom args calling convention
+			args = arguments[0];
+		}
+		else {
+			// classic calling convention
+			args = {
+				rows: arguments[0],
+				cols: arguments[1],
+				data_type: arguments[2],
+				callback: arguments[3]
+			};
+		}
+		
+		var rows = args.rows;
+		var cols = args.cols;
+		var data_type = args.data_type;
+		var callback = args.callback;
+		
+		// pagination
+		html += '<div class="pagination">';
+		html += '<table cellspacing="0" cellpadding="0" border="0" width="100%"><tr>';
+		
+		html += '<td align="left" width="33%">';
+		if (cols.headerLeft) html += cols.headerLeft;
+		else html += commify(rows.length) + ' ' + pluralize(data_type, rows.length) + '';
+		html += '</td>';
+		
+		html += '<td align="center" width="34%">';
+			html += cols.headerCenter || '&nbsp;';
+		html += '</td>';
+		
+		html += '<td align="right" width="33%">';
+			html += cols.headerRight || 'Page 1 of 1';
+		html += '</td>';
+		
+		html += '</tr></table>';
+		html += '</div>';
+		
+		html += '<div style="margin-top:5px;">';
+		
+		var tattrs = args.attribs || {};
+		if (!tattrs.class) tattrs.class = 'data_table ellip';
+		if (!tattrs.width) tattrs.width = '100%';
+		html += '<table ' + compose_attribs(tattrs) + '>';
+		
+		html += '<tr><th style="white-space:nowrap;">' + cols.join('</th><th style="white-space:nowrap;">') + '</th></tr>';
+		
+		for (var idx = 0, len = rows.length; idx < len; idx++) {
+			var row = rows[idx];
+			var tds = callback(row, idx);
+			if (tds.insertAbove) html += tds.insertAbove;
+			html += '<tr' + (tds.className ? (' class="'+tds.className+'"') : '') + (row.id ? (' data-id="'+row.id+'"') : '') + '>';
+			html += '<td>' + tds.join('</td><td>') + '</td>';
+			html += '</tr>';
+		} // foreach row
+		
+		if (!rows.length) {
+			html += '<tr><td colspan="'+cols.length+'" align="center" style="padding-top:10px; padding-bottom:10px; font-weight:bold;">';
+			html += 'No '+pluralize(data_type)+' found.';
+			html += '</td></tr>';
+		}
+		
+		html += '</table>';
+		html += '</div>';
+		
+		return html;
+	},
+	
+	setupDraggableTable: function(args) {
+		// allow table rows to be drag-sorted
+		// args: { table_sel, handle_sel, drag_ghost_sel, drag_ghost_x, drag_ghost_y, callback }
+		var $table = $(args.table_sel);
+		var $rows = $table.find('tr').slice(1); // omit header row
+		var $cur = null;
+		
+		var createDropZone = function($tr, idx, pos) {
+			pos.top -= Math.floor( pos.height / 2 );
+			
+			$('<div><div class="dz_bar"></div></div>')
+				.addClass('dropzone')
+				.css({
+					left: '' + pos.left + 'px',
+					top: '' + pos.top + 'px',
+					width: '' + pos.width + 'px',
+					height: '' + pos.height + 'px'
+				})
+				.appendTo('body')
+				.on('dragover', function(event) {
+					var e = event.originalEvent;
+					e.preventDefault();
+					e.dataTransfer.effectAllowed = "move";
+				})
+				.on('dragenter', function(event) {
+					var e = event.originalEvent;
+					e.preventDefault();
+					$(this).addClass('drag');
+				})
+				.on('dragleave', function(event) {
+					$(this).removeClass('drag');
+				})
+				.on('drop', function(event) {
+					var e = event.originalEvent;
+					e.preventDefault();
+					
+					// make sure we didn't drop on ourselves
+					if (idx == $cur.data('drag_idx')) return false;
+					
+					// see if we need to insert above or below target
+					var above = true;
+					var pos = $tr.offset();
+					var height = $tr.height();
+					var y = event.clientY;
+					if (y > pos.top + (height / 2)) above = false;
+					
+					// remove element being dragged
+					$cur.detach();
+					
+					// insert at new location
+					if (above) $tr.before( $cur );
+					else $tr.after( $cur );
+					
+					// fire callback, pass new sorted collection
+					args.callback( $table.find('tr').slice(1) );
+				});
+		}; // createDropZone
+		
+		$rows.each( function(row_idx) {
+			var $handle = $(this).find(args.handle_sel);
+			
+			$handle.on('dragstart', function(event) {
+				var e = event.originalEvent;
+				var $tr = $cur = $(this).closest('tr');
+				var $ghost = $tr.find(args.drag_ghost_sel).addClass('dragging');
+				var ghost_x = ('drag_ghost_x' in args) ? args.drag_ghost_x : Math.floor($ghost.width() / 2);
+				var ghost_y = ('drag_ghost_y' in args) ? args.drag_ghost_y : Math.floor($ghost.height() / 2);
+				
+				e.dataTransfer.setDragImage( $ghost.get(0), ghost_x, ghost_y );
+				e.dataTransfer.effectAllowed = 'move';
+				e.dataTransfer.setData('text/html', 'blah'); // needed for FF.
+				
+				// need to recalc $rows for each drag
+				$rows = $table.find('tr').slice(1);
+				
+				$rows.each( function(idx) {
+					var $tr = $(this);
+					$tr.data('drag_idx', idx);
+				});
+				
+				// and we need to recalc row_idx too
+				var row_idx = $tr.data('drag_idx');
+				
+				// create drop zones for each row
+				// (except those immedately surrounding the row we picked up)
+				$rows.each( function(idx) {
+					var $tr = $(this);
+					if ((idx != row_idx) && (idx != row_idx + 1)) {
+						var pos = $tr.offset();
+						pos.width = $tr.width();
+						pos.height = $tr.height();
+						createDropZone( $tr, idx, pos );
+					}
+				});
+				
+				// one final zone below table (possibly)
+				if (row_idx != $rows.length - 1) {
+					var $last_tr = $rows.slice(-1);
+					var pos = $last_tr.offset();
+					pos.width = $last_tr.width();
+					pos.height = $last_tr.height();
+					pos.top += pos.height;
+					createDropZone( $last_tr, $rows.length, pos );
+				}
+			}); // dragstart
+			
+			$handle.on('dragend', function(event) {
+				// cleanup drop zones
+				$('div.dropzone').remove();
+				$rows.removeData('drag_idx');
+				$table.find('.dragging').removeClass('dragging');
+			}); // dragend
+			
+		} ); // foreach row
+	},
+	
+	cancelDrag: function(table_sel) {
+		// cancel drag operation in progress (well, as best we can)
+		var $table = $(table_sel);
+		if (!$table.length) return;
+		
+		var $rows = $table.find('tr').slice(1); // omit header row
+		$('div.dropzone').remove();
+		$rows.removeData('drag_idx');
+		$table.find('.dragging').removeClass('dragging');
 	}
 	
 } );

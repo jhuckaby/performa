@@ -111,6 +111,9 @@ Class.add( Page.Admin, {
 					desc = 'Group updated: <b>' + item.group.title + '</b>';
 					actions.push( '<a href="#Admin?sub=edit_group&id='+item.group.id+'">Edit Group</a>' );
 				break;
+				case 'group_multi_update':
+					desc = 'Group sort order changed.</b>';
+				break;
 				case 'group_delete':
 					desc = 'Group deleted: <b>' + item.group.title + '</b>';
 				break;
@@ -123,6 +126,9 @@ Class.add( Page.Admin, {
 				case 'monitor_update':
 					desc = 'Monitor updated: <b>' + item.monitor.title + '</b>';
 					actions.push( '<a href="#Admin?sub=edit_monitor&id='+item.monitor.id+'">Edit Monitor</a>' );
+				break;
+				case 'monitor_multi_update':
+					desc = 'Monitor sort order changed.</b>';
 				break;
 				case 'monitor_delete':
 					desc = 'Monitor deleted: <b>' + item.monitor.title + '</b>';

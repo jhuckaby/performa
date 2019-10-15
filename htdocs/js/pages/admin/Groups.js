@@ -39,7 +39,7 @@ Class.add( Page.Admin, {
 			]
 		);
 		
-		var cols = ['Group Title', 'Group ID', 'Hostname Pattern', 'Author', 'Created', 'Actions'];
+		var cols = ['<i class="mdi mdi-menu"></i>', 'Group Title', 'Group ID', 'Hostname Pattern', 'Author', 'Created', 'Actions'];
 		
 		html += '<div style="padding:20px 20px 30px 20px">';
 		
@@ -51,8 +51,8 @@ Class.add( Page.Admin, {
 		var self = this;
 		html += this.getBasicTable( this.groups, cols, 'group', function(item, idx) {
 			var actions = [];
-			if (idx > 0) actions.push('<span class="link" onMouseUp="$P().group_move_up('+idx+')" title="Move Up"><i class="fa fa-arrow-up"></i></span>');
-			if (idx < self.groups.length - 1) actions.push('<span class="link" onMouseUp="$P().group_move_down('+idx+')" title="Move Down"><i class="fa fa-arrow-down"></i></span>');
+			// if (idx > 0) actions.push('<span class="link" onMouseUp="$P().group_move_up('+idx+')" title="Move Up"><i class="fa fa-arrow-up"></i></span>');
+			// if (idx < self.groups.length - 1) actions.push('<span class="link" onMouseUp="$P().group_move_down('+idx+')" title="Move Down"><i class="fa fa-arrow-down"></i></span>');
 			actions.push( '<span class="link" onMouseUp="$P().edit_group('+idx+')"><b>Edit</b></span>' );
 			actions.push( '<span class="link" onMouseUp="$P().delete_group('+idx+')"><b>Delete</b></span>' );
 			
@@ -61,6 +61,7 @@ Class.add( Page.Admin, {
 			else nice_match = '<span style="font-family:monospace">/' + item.hostname_match + '/</span>';
 			
 			return [
+				'<div class="td_drag_handle" draggable="true" title="Drag to reorder"><i class="mdi mdi-menu"></i></div>',
 				'<div class="td_big">' + self.getNiceGroup(item, true, col_width) + '</div>',
 				'<div style="">' + item.id + '</div>',
 				'<div class="ellip" style="max-width:'+col_width+'px;">' + nice_match + '</div>',
@@ -79,49 +80,34 @@ Class.add( Page.Admin, {
 		html += '</div>'; // sidebar tabs
 		
 		this.div.html( html );
+		
+		this.setupDraggableTable({
+			table_sel: this.div.find('table.data_table'), 
+			handle_sel: 'td div.td_drag_handle', 
+			drag_ghost_sel: 'td div.td_big', 
+			drag_ghost_x: 5, 
+			drag_ghost_y: 10, 
+			callback: this.group_move.bind(this)
+		});
 	},
 	
-	group_move_up: function(idx) {
-		// move selected item up (sort order change)
-		var self = this;
-		if (this.swap_in_progress) return;
-		this.swap_in_progress = true;
+	group_move: function($rows) {
+		// a drag operation has been completed
+		var items = [];
 		
-		var temp = this.groups[idx - 1].sort_order;
-		this.groups[idx - 1].sort_order = this.groups[idx].sort_order;
-		this.groups[idx].sort_order = temp;
-		this.receive_groups({ rows: this.groups });
+		$rows.each( function(idx) {
+			var $row = $(this);
+			items.push({
+				id: $row.data('id'),
+				sort_order: idx
+			});
+		});
 		
-		var swap = {
-			a: this.groups[idx].id, 
-			b: this.groups[idx - 1].id, 
-			key: 'sort_order' 
+		var data = {
+			items: items
 		};
-		app.api.post( 'app/swap_group_props', swap, function(resp) {
-			// done, release UI
-			self.swap_in_progress = false;
-		} );
-	},
-
-	group_move_down: function(idx) {
-		// move selected item down (sort order change)
-		var self = this;
-		if (this.swap_in_progress) return;
-		this.swap_in_progress = true;
-		
-		var temp = this.groups[idx + 1].sort_order;
-		this.groups[idx + 1].sort_order = this.groups[idx].sort_order;
-		this.groups[idx].sort_order = temp;
-		this.receive_groups({ rows: this.groups });
-		
-		var swap = {
-			a: this.groups[idx].id, 
-			b: this.groups[idx + 1].id,
-			key: 'sort_order'
-		};
-		app.api.post( 'app/swap_group_props', swap, function(resp) {
-			// done, release UI
-			self.swap_in_progress = false;
+		app.api.post( 'app/multi_update_group', data, function(resp) {
+			// done
 		} );
 	},
 	
