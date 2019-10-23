@@ -253,8 +253,17 @@ Class.subclass( Page.Base, "Page.Server", {
 		});
 		
 		// process each row
+		var last_row = null;
+		var sys_def = find_object( config.systems, { id: this.args.sys } ) || { epoch_div: 9999999 };
+		
 		this.rows.forEach( function(row) {
 			if ((mon_id in row.totals) && self.isRowInRange(row)) {
+				// handle gaps
+				if (last_row && (row.date - last_row.date > sys_def.epoch_div * 2)) {
+					// insert null gap
+					graph_rows.push({ x: (last_row.date * 1000) + 1, y: null });
+				}
+				
 				graph_rows.push({ x: row.date * 1000, y: row.totals[mon_id] });
 				
 				if (row.alerts) {
@@ -266,6 +275,8 @@ Class.subclass( Page.Base, "Page.Server", {
 					
 					if (yes_alert) alert_times.push( row.date * 1000 );
 				} // alerts
+				
+				last_row = row;
 			} // in range
 		});
 		

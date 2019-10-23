@@ -348,12 +348,21 @@ Class.subclass( Page.Base, "Page.Group", {
 			if (alert_def.monitor_id == mon_id) active_alerts[ alert_def.id ] = true;
 		});
 		
+		var sys_def = find_object( config.systems, { id: this.args.sys } ) || { epoch_div: 9999999 };
+		
 		this.hosts.forEach( function(host) {
 			// build datasets for each host (layer)
 			var graph_rows = [];
+			var last_row = null;
 			
 			if (host.rows) host.rows.forEach( function(row) {
 				if ((mon_id in row.totals) && self.isRowInRange(row)) {
+					// handle gaps
+					if (last_row && (row.date - last_row.date > sys_def.epoch_div * 2)) {
+						// insert null gap
+						graph_rows.push({ x: (last_row.date * 1000) + 1, y: null });
+					}
+					
 					graph_rows.push({ x: row.date * 1000, y: row.totals[mon_id] });
 					
 					if (row.date < min_date) min_date = row.date;
@@ -367,6 +376,8 @@ Class.subclass( Page.Base, "Page.Group", {
 						
 						if (yes_alert) alert_times.push( row.date * 1000 );
 					} // alerts
+					
+					last_row = row;
 				} // in range
 			}); // foreach row
 			

@@ -45,6 +45,20 @@
 			"created": 1434125333
 		} ],
 		[ "listPush", "global/monitors", {
+			"id": "cpu_usage",
+			"title": "CPU Usage %",
+			"source": "100 - [cpu/totals/idle]",
+			"data_type": "float",
+			"suffix": "%",
+			"merge_type": "avg",
+			"group_match": ".+",
+			"display": true,
+			"sort_order": 1,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333
+		} ],
+		[ "listPush", "global/monitors", {
 			"id": "mem_used",
 			"title": "Memory in Use",
 			"source": "[memory/used]",
@@ -53,7 +67,7 @@
 			"merge_type": "",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 1,
+			"sort_order": 2,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -67,7 +81,7 @@
 			"merge_type": "avg",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 2,
+			"sort_order": 3,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -81,7 +95,7 @@
 			"merge_type": "avg",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 3,
+			"sort_order": 4,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -95,7 +109,7 @@
 			"merge_type": "avg",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 4,
+			"sort_order": 5,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -111,7 +125,7 @@
 			"merge_type": "",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 5,
+			"sort_order": 6,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -127,7 +141,7 @@
 			"merge_type": "",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 6,
+			"sort_order": 7,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -143,7 +157,7 @@
 			"merge_type": "",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 7,
+			"sort_order": 8,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -157,7 +171,7 @@
 			"merge_type": "",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 8,
+			"sort_order": 9,
 			"notes": "This is for Linux only.",
 			"username": "admin",
 			"modified": 1434125333,
@@ -173,7 +187,7 @@
 			"merge_type": "",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 9,
+			"sort_order": 10,
 			"notes": "This is for Linux only.",
 			"username": "admin",
 			"modified": 1434125333,
@@ -190,7 +204,7 @@
 			"merge_type": "total",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 10,
+			"sort_order": 11,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -206,7 +220,7 @@
 			"merge_type": "total",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 11,
+			"sort_order": 12,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
@@ -220,7 +234,7 @@
 			"merge_type": "",
 			"group_match": ".+",
 			"display": true,
-			"sort_order": 12,
+			"sort_order": 13,
 			"username": "admin",
 			"modified": 1434125333,
 			"created": 1434125333
