@@ -955,11 +955,16 @@ Class.subclass( Page, "Page.Base", {
 		var count = 0;
 		
 		for (var idx = 0, len = data.length; idx < len; idx++) {
-			total += data[idx].y;
-			count++;
-			if (count >= amount) {
-				new_data.push({ x: data[idx].x, y: total / count });
-				total = 0; count = 0;
+			if (data[idx].y === null) {
+				new_data.push( data[idx] );
+			}
+			else {
+				total += data[idx].y;
+				count++;
+				if (count >= amount) {
+					new_data.push({ x: data[idx].x, y: total / count });
+					total = 0; count = 0;
+				}
 			}
 		}
 		if (count) {
