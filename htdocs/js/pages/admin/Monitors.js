@@ -94,7 +94,7 @@ Class.add( Page.Admin, {
 			drag_ghost_sel: 'td div.td_big', 
 			drag_ghost_x: 5, 
 			drag_ghost_y: 10, 
-			callback: this.group_move.bind(this)
+			callback: this.monitor_move.bind(this)
 		});
 	},
 	
