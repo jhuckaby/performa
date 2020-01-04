@@ -37,7 +37,8 @@
 		"extra_server_info": {
 			"title": "Kernel Version",
 			"source": "[os/platform] [os/kernel]"
-		}
+		},
+		"first_year": 2020
 	},
 	
 	"Storage": {

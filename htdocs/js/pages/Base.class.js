@@ -1344,7 +1344,7 @@ Class.subclass( Page, "Page.Base", {
 				// jump to previous year
 				var yyyy = parseInt( RegExp.$1 );
 				yyyy--;
-				if (yyyy < app.first_year) return;
+				if (yyyy < config.first_year) return;
 				args.date = '' + yyyy;
 			}
 			

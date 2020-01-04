@@ -132,8 +132,8 @@ app.extend({
 	initControlMenus: function() {
 		// populate control strip menus (dates, groups)
 		var dargs = get_date_args( new Date() );
-		if (!this.first_year) this.first_year = dargs.year;
-		var first_year = this.first_year;
+		if (!config.first_year) config.first_year = dargs.year;
+		var first_year = config.first_year;
 		var old_year = $('#fe_ctrl_year').val();
 		
 		$('#fe_ctrl_year').empty();
