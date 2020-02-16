@@ -1,6 +1,6 @@
 {
 	"name": "performa",
-	"version": "1.0.20",
+	"version": "1.0.21",
 	"description": "A multi-server monitoring system with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
 	"homepage": "https://github.com/jhuckaby/performa",
