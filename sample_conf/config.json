@@ -33,12 +33,36 @@
 		"privilege_list": [
 			{ "id": "admin", "title": "Administrator" }
 		],
-		"max_legend_size": 16,
 		"extra_server_info": {
 			"title": "Kernel Version",
 			"source": "[os/platform] [os/kernel]"
 		},
-		"first_year": 2020
+		"first_year": 2020,
+		"max_legend_size": 16,
+		
+		"graph_overrides": {
+			"all_sizes": {
+				"stroke.curve": "smooth",
+				"markers.style": "hollow",
+				"title.align": "center",
+				"grid.show": true
+			},
+			"full": {
+				"chart.height": 400,
+				"title.fontSize": 16,
+				"stroke.width": 3
+			},
+			"half": {
+				"chart.height": 300,
+				"title.fontSize": 15,
+				"stroke.width": 2
+			},
+			"third": {
+				"chart.height": 200,
+				"title.fontSize": 14,
+				"stroke.width": 2
+			}
+		}
 	},
 	
 	"Storage": {

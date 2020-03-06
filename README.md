@@ -31,6 +31,8 @@
 		+ [hostname_display_strip](#hostname_display_strip)
 		+ [alert_web_hook](#alert_web_hook)
 		+ [system_web_hooks](#system_web_hooks)
+		+ [new_server_stale_threshold](#new_server_stale_threshold)
+		+ [graph_overrides](#graph_overrides)
 	* [Storage Configuration](#storage-configuration)
 		+ [Filesystem](#filesystem)
 		+ [Couchbase](#couchbase)
@@ -363,6 +365,50 @@ The web hook request will be an HTTP POST with a JSON payload.  The JSON will co
 ### new_server_stale_threshold
 
 The `new_server_stale_threshold` property sets the maximum number of seconds to allow for an old server to come back online without considering it to be "new".  Meaning, if a server disappears for more than `new_server_stale_threshold` seconds (default 3600) then comes back online, it is considered to be "new" again, and a notification is sent out, and an entry is added to the activity log.  This only affects logging and notifications.
+
+### graph_overrides
+
+If you want, you can override any settings for the [ApexCharts](https://github.com/apexcharts/apexcharts.js) library, which is used to render all of the Performa charts.  See the `graph_overrides` object in the config file (located inside the `client` object), which is formatted like this:
+
+```js
+"graph_overrides": {
+	"all_sizes": {
+		"stroke.curve": "smooth",
+		"markers.style": "hollow",
+		"title.align": "center",
+		"grid.show": true
+	},
+	"full": {
+		"chart.height": 400,
+		"title.fontSize": 16,
+		"stroke.width": 3
+	},
+	"half": {
+		"chart.height": 300,
+		"title.fontSize": 15,
+		"stroke.width": 2
+	},
+	"third": {
+		"chart.height": 200,
+		"title.fontSize": 14,
+		"stroke.width": 2
+	}
+}
+```
+
+The `all_sizes` object will apply overrides to all three graph sizes, whereas the `full`, `half` and `third` objects apply overrides to their respective graph size setting.  The `full`, `half` and `third` take precedence over `all_sizes`, if the same overrides exist in both places.  Inside the objects, the format of the ApexCharts configuration overrides is in "dot notation", so you can apply deep nested overrides.  For example, consider this override:
+
+```js
+"stroke.curve": "smooth",
+```
+
+This controls the ApexCharts `curve` setting, which is inside the `stroke` group.  For details on this, see the [stroke documentation](https://apexcharts.com/docs/options/stroke/) for details.  Similarly, this setting:
+
+```js
+"title.align": "center",
+```
+
+This controls the ApexCharts `align` setting, which is inside the `title` group.  For details on this one, see the [title documentation](https://apexcharts.com/docs/options/title/).
 
 ## Storage Configuration
 

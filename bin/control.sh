@@ -100,7 +100,7 @@ do
 		    echo "$ARG: $NAME already running (pid $PID)"
 		    continue
 		fi
-		node --trace-warnings $HOMEDIR/lib/main.js --debug --debug_level 9 --echo "Performa WebServer API Transaction Error" --color "$@"
+		node --trace-warnings $HOMEDIR/lib/main.js --debug --debug_level 9 --echo "Performa WebServer API Transaction Error" "$@"
 	;;
 	setup)
 		node $HOMEDIR/bin/storage-cli.js setup

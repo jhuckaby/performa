@@ -865,13 +865,13 @@ Class.subclass( Page, "Page.Base", {
 						show: true,
 						
 					}
-				},	 
+				},
 				yaxis: {
 					lines: {
 						show: true,
 						
 					}
-				},	
+				}
 			},
 			legend: legend_opts
 		}; // options
@@ -888,6 +888,20 @@ Class.subclass( Page, "Page.Base", {
 			options.fill = {
 				opacity: 1.0
 			};
+		}
+		
+		// allow config overrides
+		if (config.graph_overrides && config.graph_overrides.all_sizes) {
+			for (var path in config.graph_overrides.all_sizes) {
+				setPath( options, path, config.graph_overrides.all_sizes[path] );
+			}
+		}
+		
+		var size_key = app.getPref(pref_key);
+		if (config.graph_overrides && config.graph_overrides[size_key]) {
+			for (var path in config.graph_overrides[size_key]) {
+				setPath( options, path, config.graph_overrides[size_key][path] );
+			}
 		}
 		
 		return options;
