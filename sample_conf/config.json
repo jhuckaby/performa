@@ -95,6 +95,7 @@
 		"http_server_signature": "Performa 1.0",
 		"http_gzip_text": true,
 		"http_timeout": 30,
+		"http_recent_requests": 0,
 		"http_regex_json": "(text|javascript|js|json)",
 		"http_response_headers": {
 			"Access-Control-Allow-Origin": "*"
