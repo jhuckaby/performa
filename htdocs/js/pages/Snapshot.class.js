@@ -402,6 +402,32 @@ Class.subclass( Page.Base, "Page.Snapshot", {
 		html += '</div>';
 		html += '</fieldset>';
 		
+		// Open Files
+		if (snapshot.files && snapshot.files.list && snapshot.files.list.length) {
+			var files_opts = {
+				id: 't_snap_files',
+				item_name: 'file',
+				sort_by: 'pid',
+				sort_dir: 1,
+				filter: '',
+				column_ids: ['pid', 'type', 'desc', 'path'],
+				column_labels: ["PID", "Type", "Description", "Path/Info"]
+			};
+			html += '<fieldset style="margin-top:10px;">';
+			html += '<legend>Open Files</legend>';
+			html += '<div class="inline_table_scrollarea">';
+			html += this.getSortableTable( snapshot.files.list, files_opts, function(item) {
+				return [
+					item.pid,
+					item.type,
+					item.desc,
+					'<span style="font-family:monospace; white-space:normal; word-break:break-word;">' + item.path + '</span>'
+				];
+			});
+			html += '</div>';
+			html += '</fieldset>';
+		}
+		
 		// Filesystems
 		var mounts = [];
 		for (var key in metadata.data.mounts) {
