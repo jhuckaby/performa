@@ -453,6 +453,8 @@ Class.add( Page.Admin, {
 		monitor.merge_type = $('#fe_em_merge_type').val();
 		monitor.notes = $('#fe_em_notes').val();
 		monitor.display = $('#fe_em_display').is(':checked') ? true : false;
+		monitor.delta = $('#fe_em_delta').is(':checked') ? true : false;
+		monitor.divide_by_delta = $('#fe_em_divide_by_delta').is(':checked') ? true : false;
 		
 		if (!monitor.id.length) {
 			return app.badField('#fe_em_id', "Please enter a unique alphanumeric ID for the monitor.");
