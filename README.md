@@ -241,8 +241,8 @@ Using this optional property you can set specific mailer options, such as SMTP S
 
 ```js
 "mail_options": {
-	"secure", true,
-	"auth", { user: "fsmith", pass: "12345" },
+	"secure": true,
+	"auth": { "user": "fsmith", "pass": "12345" },
 	"connectionTimeout": 10000,
 	"greetingTimeout": 10000,
 	"socketTimeout": 10000
