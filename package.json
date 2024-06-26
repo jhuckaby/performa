@@ -35,7 +35,7 @@
 		"zeroupload": "^1.0.0",
 		"font-awesome": "4.7.0",
 		"@mdi/font": "3.5.94",
-		"apexcharts": "3.8.3",
+		"apexcharts": "3.24.0",
 		"pixl-args": "^1.0.3",
 		"pixl-cli": "^1.0.8",
 		"pixl-config": "^1.0.4",
