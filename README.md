@@ -145,17 +145,21 @@ curl -s https://raw.githubusercontent.com/jhuckaby/performa/master/bin/install.j
 
 This will install the latest stable release of Performa and all of its dependencies under: `/opt/performa/`
 
-If you'd rather install it manually (or something went wrong with the auto-installer), here are the raw commands:
+If you'd rather install it manually (or something went wrong with the auto-installer), here are the commands:
+
+<details><summary>Manual Install Commands</summary>
 
 ```
 mkdir -p /opt/performa
 cd /opt/performa
-curl -L https://github.com/jhuckaby/performa/archive/v1.0.0.tar.gz | tar zxvf - --strip-components 1
+curl -L https://github.com/jhuckaby/performa/archive/v9.9.9.tar.gz | tar zxvf - --strip-components 1
 npm install
 node bin/build.js dist
 ```
 
-Replace `v1.0.0` with the desired Performa version from the [release list](https://github.com/jhuckaby/performa/releases), or `master` for the head revision (unstable).
+Replace `v9.9.9` with the desired Performa version from the [release list](https://github.com/jhuckaby/performa/releases), or `master` for the head revision (unstable).
+
+</details>
 
 # Setup
 
