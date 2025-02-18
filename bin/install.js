@@ -1,5 +1,5 @@
 // Performa Auto Installer
-// Copyright (c) 2019 Joseph Huckaby, MIT License.
+// Copyright (c) 2019 - 2025 Joseph Huckaby, MIT License.
 // https://github.com/jhuckaby/performa
 
 // To install, issue this command as root:
@@ -18,6 +18,25 @@ var log_file = '';
 var gh_repo_url = 'http://github.com/jhuckaby/performa';
 var gh_releases_url = 'https://api.github.com/repos/jhuckaby/performa/releases';
 var gh_head_tarball_url = 'https://github.com/jhuckaby/performa/archive/master.tar.gz';
+
+// Check if Node.js version is old
+if (process.version.match(/^v?(\d+)/) && (parseInt(RegExp.$1) < 16) && !process.env['PERFORMA_OLD']) {
+	console.error("\nERROR: You are using an incompatible version of Node.js (" + process.version + ").  Please upgrade to v16 or later.  Instructions: https://nodejs.org/en/download/\n\nTo ignore this error and run unsafely, set an PERFORMA_OLD environment variable.  Do this at your own risk.\n");
+	process.exit(1);
+}
+
+// Error out if we have low memory
+if ((os.totalmem() < 64 * 1024 * 1024) && !process.env['PERFORMA_DANGER']) {
+	console.error("\nERROR: The current machine has less than 64 MB of total RAM.  Performa will likely fail to install successfully under such low memory conditions.\n\nTo ignore this error and attempt the install anyway, set a PERFORMA_DANGER environment variable.  Do this at your own risk.\n");
+	process.exit(1);
+}
+
+// make sure we have NPM available
+try { cp.execSync('which npm'); }
+catch (err) {
+	console.error("\nERROR: NPM cannot be found.  Performa requires both Node.js and NPM to be preinstalled.  Instructions: https://nodejs.org/en/download/\n");
+	process.exit(1);
+}
 
 var print = function(msg) { 
 	process.stdout.write(msg); 

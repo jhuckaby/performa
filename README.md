@@ -135,9 +135,11 @@ A quick introduction to some common terms used in Performa:
 
 # Installation
 
-Please note that Performa currently only works on POSIX-compliant operating systems, which basically means Unix/Linux and macOS.  If there is enough interest, I'll look into making it work on Windows.
+Please note that Performa currently only works on POSIX-compliant operating systems, which basically means Unix/Linux and macOS.  You'll also need to have [Node.js](https://nodejs.org/en/download/) pre-installed on your server (you do **not** need this on any of the servers you are monitoring however).  Please note that we **strongly suggest that you install the LTS version of Node.js**.  While Performa should work on the "current" release channel, LTS is more stable and more widely tested.  See [Node.js Releases](https://nodejs.org/en/about/releases/) for details.
 
-You'll need to have [Node.js](https://nodejs.org/en/download/) pre-installed on your master server (you do **not** need this on any of the servers you are monitoring however).  Then become root and type this:
+**Performa also requires NPM to be preinstalled.**  Now, this is typically bundled with and automatically installed with Node.js, but if you install Node.js by hand, you may have to install NPM yourself.
+
+Once you have [Node.js](https://nodejs.org/en/download/) and NPM pre-installed on your master server, become root and type this:
 
 ```
 curl -s https://raw.githubusercontent.com/jhuckaby/performa/master/bin/install.js | node
