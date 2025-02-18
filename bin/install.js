@@ -11,7 +11,7 @@ var util = require('util');
 var os = require('os');
 var cp = require('child_process');
 
-var installer_version = '1.1';
+var installer_version = '1.2';
 var base_dir = '/opt/performa';
 var log_dir = base_dir + '/logs';
 var log_file = '';
